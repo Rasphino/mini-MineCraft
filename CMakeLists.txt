@@ -3,11 +3,18 @@ project(Ex0)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(src/glad/include)
+include_directories(
+        src/glad/include
+        lib/assimp/include
+        lib/glew/include
+        lib/glfw/include
+        lib/glm/glm
+        lib/sqlite/src
+)
 
 set(SOURCES src/main.cpp src/glad/src/glad.c src/stb_image.cpp
         src/model.cpp src/db/Hash.cpp src/db/MCdb.cpp)
-set(HEADERS src/Shader.h src/stb_image.h src/Camera.h src/RenderCube
+set(HEADERS src/Shader.h src/stb_image.h src/Camera.h
         src/TextureAtlas.h src/model.h src/mesh.h src/noise.h src/db/MCdb.h
         src/db/Hash.h)
 set(TEXTURES src/textures/Test.png src/shaders/texture.fs src/shaders/texture.vs)
