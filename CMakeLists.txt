@@ -12,10 +12,10 @@ find_package(sqlite3 REQUIRED)
 include_directories(src/glad/include)
 
 set(SOURCES src/main.cpp src/glad/src/glad.c src/stb_image.cpp
-        src/model.cpp src/db/Hash.cpp src/db/MCdb.cpp)
+        src/model.cpp src/MCdb.cpp src/MapManager.cpp)
 set(HEADERS src/Shader.h src/stb_image.h src/Camera.h
-        src/TextureAtlas.h src/model.h src/mesh.h src/noise.h src/db/MCdb.h
-        src/db/Hash.h)
+        src/TextureAtlas.h src/model.h src/mesh.h src/noise.h src/MCdb.h
+        src/MapManager.h)
 set(TEXTURES src/textures/Test.png src/shaders/texture.fs src/shaders/texture.vs)
 
 add_executable(Ex0 ${SOURCES} ${HEADERS})
