@@ -89,7 +89,7 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         processInput(window);
-        glClearColor(0.78,0.78,0.82, 1);
+        glClearColor(0.78, 0.78, 0.82, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         camera.ProcessJump();
@@ -99,60 +99,24 @@ int main() {
                                                 200.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
+        // 将相机的位置传给MapManager，如果相机移动到另一个chunk，则更新cache
         int x, z;
         mapManager.updateCacheMap(camera.Position);
+        // 获取cache的指针，以使用cache进行绘制
         Cache *mapCache = mapManager.getCache();
         std::tie(x, z) = mapManager.getCacheVertexCoord();
 
+        // 遍历cache，根据cache里block的类型，调用cube的Draw函数进行绘制
         for (int cx = 0; cx < 3; ++cx) {
             for (int cz = 0; cz < 3; ++cz) {
                 for (int i = 0; i < 16; i++) {
                     for (int k = 0; k < 16; k++) {
                         for (int j = 0; j < 64; j++) {
                             glm::vec3 pos = glm::vec3(cx * 16 + x + i, j, cz * 16 + z + k);
-                            switch ((*mapCache)[cx][cz][i][j][k]) {
-                                case MapManager::BlockType::SOIL: {
-                                    cube.Draw("soil", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::GRASS: {
-                                    cube.Draw("grass", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::HIGHGRASS: {
-                                    cube.Draw("highGrass", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::FLOWER_1: {
-                                    cube.Draw("flower_1", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::FLOWER_2: {
-                                    cube.Draw("flower_2", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::FLOWER_3: {
-                                    cube.Draw("flower_3", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::FLOWER_4: {
-                                    cube.Draw("flower_4", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::FLOWER_5: {
-                                    cube.Draw("flower_5", pos, projection, view, camera.Position);
-                                    break;
-                                }
-                                case MapManager::BlockType::FLOWER_6: {
-                                    cube.Draw("flower_6", pos, projection, view, camera.Position);
-                                    break;
-                                }
-
-                                default:
-                                case MapManager::BlockType::NONE: {
-
-                                    break;
-                                }
+                            if ((*mapCache)[cx][cz][i][j][k] != CubeType::NONE) {
+                                cube.Draw(static_cast<CubeType>((*mapCache)[cx][cz][i][j][k]), pos,
+                                          projection, view,
+                                          camera.Position);
                             }
                         }
                     }

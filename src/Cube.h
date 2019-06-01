@@ -12,6 +12,10 @@
 #include <vector>
 #include "Shader.h"
 
+enum CubeType {
+    NONE = -1, SOIL, GRASS, HIGHGRASS, FLOWER_1,
+    FLOWER_2, FLOWER_3, FLOWER_4, FLOWER_5, FLOWER_6
+};
 
 class Cube {
 private:
@@ -30,7 +34,8 @@ private:
 
 public:
     Cube();
-    void Draw(std::string Name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view, glm::vec3 camerapos);
+    void Draw(CubeType Name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view,
+              glm::vec3 camerapos);
     ~Cube();
 };
 

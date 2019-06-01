@@ -63,12 +63,12 @@ void MapManager::genCacheFromNoise() {
                     int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
                                                   (cz * 16 + z + k) * 0.1) + 1) * 10);
                     for (int j = 0; j < h; ++j) {
-                        (*cache)[cx][cz][i][j][k] = BlockType::SOIL;
+                        (*cache)[cx][cz][i][j][k] = CubeType::SOIL;
                     }
                     for (int j = h; j < 64; ++j) {
-                        (*cache)[cx][cz][i][j][k] = BlockType::NONE;
+                        (*cache)[cx][cz][i][j][k] = CubeType::NONE;
                     }
-                    (*cache)[cx][cz][i][h][k] = BlockType::GRASS;
+                    (*cache)[cx][cz][i][h][k] = CubeType::GRASS;
                 }
             }
 
@@ -102,30 +102,30 @@ void MapManager::genFlower(int cx, int cz) {
             int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
                                           (cz * 16 + z + k) * 0.1) + 1) * 10);
             int r = rand() % 1000 + 1;
-            int t = BlockType::NONE;
+            int t = CubeType::NONE;
             if (r % 7 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::HIGHGRASS;
-                t = BlockType::HIGHGRASS;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::HIGHGRASS;
+                t = CubeType::HIGHGRASS;
             } else if (r % 16 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_1;
-                t = BlockType::FLOWER_1;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::FLOWER_1;
+                t = CubeType::FLOWER_1;
             } else if (r % 20 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_2;
-                t = BlockType::FLOWER_2;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::FLOWER_2;
+                t = CubeType::FLOWER_2;
             } else if (r % 20 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_3;
-                t = BlockType::FLOWER_3;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::FLOWER_3;
+                t = CubeType::FLOWER_3;
             } else if (r % 20 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_4;
-                t = BlockType::FLOWER_4;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::FLOWER_4;
+                t = CubeType::FLOWER_4;
             } else if (r % 24 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_5;
-                t = BlockType::FLOWER_5;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::FLOWER_5;
+                t = CubeType::FLOWER_5;
             } else if (r % 24 == 0) {
-                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_6;
-                t = BlockType::FLOWER_6;
+                (*cache)[cx][cz][i][h + 1][k] = CubeType::FLOWER_6;
+                t = CubeType::FLOWER_6;
             }
-            if (t != BlockType::NONE) {
+            if (t != CubeType::NONE) {
                 std::string tmpQuery = "(" + std::to_string(cacheMap[cx][cz]) + ", " +
                                        std::to_string(i) + ", " +
                                        std::to_string(h + 1) + ", " +
@@ -172,7 +172,7 @@ void MapManager::loadFlower(int cx, int cz) {
             if (row.empty()) break;
             int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);
             int t = stoi(row[4]);
-            if (t >= BlockType::HIGHGRASS && t <= BlockType::FLOWER_6) {
+            if (t >= CubeType::HIGHGRASS && t <= CubeType::FLOWER_6) {
                 (*cache)[cx][cz][x][y][z] = t;
             }
         }
