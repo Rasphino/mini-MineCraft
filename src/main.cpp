@@ -107,12 +107,13 @@ int main() {
         std::tie(x, z) = mapManager.getCacheVertexCoord();
 
         // 遍历cache，根据cache里block的类型，调用cube的Draw函数进行绘制
-        for (int cx = 0; cx < 3; ++cx) {
-            for (int cz = 0; cz < 3; ++cz) {
-                for (int i = 0; i < 16; i++) {
-                    for (int k = 0; k < 16; k++) {
+        for (int cx = 0; cx < CHUNK_NUM; ++cx) {
+            for (int cz = 0; cz < CHUNK_NUM; ++cz) {
+                for (int i = 0; i < CHUNK_SIZE; i++) {
+                    for (int k = 0; k < CHUNK_SIZE; k++) {
                         for (int j = 0; j < 64; j++) {
-                            glm::vec3 pos = glm::vec3(cx * 16 + x + i, j, cz * 16 + z + k);
+                            glm::vec3 pos = glm::vec3(cx * CHUNK_SIZE + x + i, j,
+                                                      cz * CHUNK_SIZE + z + k);
                             if ((*mapCache)[cx][cz][i][j][k] != CubeType::NONE) {
                                 cube.Draw(static_cast<CubeType>((*mapCache)[cx][cz][i][j][k]), pos,
                                           projection, view,

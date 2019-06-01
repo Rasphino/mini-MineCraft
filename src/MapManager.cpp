@@ -6,14 +6,15 @@
 #include <tuple>
 #include "MapManager.h"
 
+
 MapManager::MapManager() {
-    cache = new Cache[3];
+    cache = new Cache[CHUNK_NUM];
     db = new MCdb(MCdb::Type::SQLITE);
     db->initDB("MineCraft");
 }
 
 MapManager::MapManager(glm::vec3 &pos) {
-    cache = new Cache[3];
+    cache = new Cache[CHUNK_NUM];
     db = new MCdb(MCdb::Type::SQLITE);
     db->initDB("MineCraft");
     genCacheMap(pos);
@@ -27,15 +28,44 @@ MapManager::~MapManager() {
 }
 
 void MapManager::genCacheMap(glm::vec3 &pos) {
-    cacheMap[0][0] = getID(int(pos[0] - 16), int(pos[2] - 16));
-    cacheMap[0][1] = getID(int(pos[0] - 16), int(pos[2]));
-    cacheMap[0][2] = getID(int(pos[0] - 16), int(pos[2] + 16));
-    cacheMap[1][0] = getID(int(pos[0]), int(pos[2] - 16));
+    cacheMap[0][0] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
+    cacheMap[0][1] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2]));
+    cacheMap[0][2] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
+    cacheMap[1][0] = getID(int(pos[0]), int(pos[2] - CHUNK_SIZE));
     cacheMap[1][1] = getID(int(pos[0]), int(pos[2]));
-    cacheMap[1][2] = getID(int(pos[0]), int(pos[2] + 16));
-    cacheMap[2][0] = getID(int(pos[0] + 16), int(pos[2] - 16));
-    cacheMap[2][1] = getID(int(pos[0] + 16), int(pos[2]));
-    cacheMap[2][2] = getID(int(pos[0] + 16), int(pos[2] + 16));
+    cacheMap[1][2] = getID(int(pos[0]), int(pos[2] + CHUNK_SIZE));
+    cacheMap[2][0] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
+    cacheMap[2][1] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2]));
+    cacheMap[2][2] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
+//    cacheMap[0][0] = getID(int(pos[0] - 2 * CHUNK_SIZE), int(pos[2] - 2 * CHUNK_SIZE));
+//    cacheMap[0][1] = getID(int(pos[0] - 2 * CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
+//    cacheMap[0][2] = getID(int(pos[0] - 2 * CHUNK_SIZE), int(pos[2]));
+//    cacheMap[0][3] = getID(int(pos[0] - 2 * CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
+//    cacheMap[0][4] = getID(int(pos[0] - 2 * CHUNK_SIZE), int(pos[2] + 2 * CHUNK_SIZE));
+//
+//    cacheMap[1][0] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] - 2 * CHUNK_SIZE));
+//    cacheMap[1][1] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
+//    cacheMap[1][2] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2]));
+//    cacheMap[1][3] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
+//    cacheMap[1][4] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] + 2 * CHUNK_SIZE));
+//
+//    cacheMap[2][0] = getID(int(pos[0]), int(pos[2] - 2 * CHUNK_SIZE));
+//    cacheMap[2][1] = getID(int(pos[0]), int(pos[2] - CHUNK_SIZE));
+//    cacheMap[2][2] = getID(int(pos[0]), int(pos[2]));
+//    cacheMap[2][3] = getID(int(pos[0]), int(pos[2] + CHUNK_SIZE));
+//    cacheMap[2][4] = getID(int(pos[0]), int(pos[2] + 2 * CHUNK_SIZE));
+//
+//    cacheMap[3][0] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2] - 2 * CHUNK_SIZE));
+//    cacheMap[3][1] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
+//    cacheMap[3][2] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2]));
+//    cacheMap[3][3] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
+//    cacheMap[3][4] = getID(int(pos[0] + CHUNK_SIZE), int(pos[2] + 2 * CHUNK_SIZE));
+//
+//    cacheMap[4][0] = getID(int(pos[0] + 2 * CHUNK_SIZE), int(pos[2] - 2 * CHUNK_SIZE));
+//    cacheMap[4][1] = getID(int(pos[0] + 2 * CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
+//    cacheMap[4][2] = getID(int(pos[0] + 2 * CHUNK_SIZE), int(pos[2]));
+//    cacheMap[4][3] = getID(int(pos[0] + 2 * CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
+//    cacheMap[4][4] = getID(int(pos[0] + 2 * CHUNK_SIZE), int(pos[2] + 2 * CHUNK_SIZE));
 }
 
 void MapManager::updateCacheMap(glm::vec3 &pos) {
@@ -53,15 +83,15 @@ void MapManager::updateCacheMap(glm::vec3 &pos) {
 void MapManager::genCacheFromNoise() {
     int x, z;
     std::tie(x, z) = getChunkVertex(p[0], p[2]);
-    x = (x - 1) * 16;
-    z = (z - 1) * 16;
+    x = (x - CHUNK_NUM / 2) * CHUNK_SIZE;
+    z = (z - CHUNK_NUM / 2) * CHUNK_SIZE;
 
-    for (int cx = 0; cx < 3; ++cx) {
-        for (int cz = 0; cz < 3; ++cz) {
-            for (int i = 0; i < 16; ++i) {
-                for (int k = 0; k < 16; ++k) {
-                    int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
-                                                  (cz * 16 + z + k) * 0.1) + 1) * 10);
+    for (int cx = 0; cx < CHUNK_NUM; ++cx) {
+        for (int cz = 0; cz < CHUNK_NUM; ++cz) {
+            for (int i = 0; i < CHUNK_SIZE; ++i) {
+                for (int k = 0; k < CHUNK_SIZE; ++k) {
+                    int h = (int) ((n.PerlinNoise((cx * CHUNK_SIZE + x + i) * 0.1,
+                                                  (cz * CHUNK_SIZE + z + k) * 0.1) + 1) * 10);
                     for (int j = 0; j < h; ++j) {
                         (*cache)[cx][cz][i][j][k] = CubeType::SOIL;
                     }
@@ -84,23 +114,23 @@ Cache *MapManager::getCache() {
 std::pair<int32_t, int32_t> MapManager::getCacheVertexCoord() {
     int x, z;
     std::tie(x, z) = getChunkVertex(p[0], p[2]);
-    x--;
-    z--;
-    return std::pair<int32_t, int32_t>(x * 16, z * 16);
+    x = x - CHUNK_NUM / 2;
+    z = z - CHUNK_NUM / 2;
+    return std::pair<int32_t, int32_t>(x * CHUNK_SIZE, z * CHUNK_SIZE);
 }
 
 void MapManager::genFlower(int cx, int cz) {
     int x, z;
     std::tie(x, z) = getChunkVertex(p[0], p[2]);
-    x = (x - 1) * 16;
-    z = (z - 1) * 16;
+    x = (x - CHUNK_NUM / 2) * CHUNK_SIZE;
+    z = (z - CHUNK_NUM / 2) * CHUNK_SIZE;
 
     std::vector<std::string> querys;
 
-    for (int i = 0; i < 16; ++i) {
-        for (int k = 0; k < 16; ++k) {
-            int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
-                                          (cz * 16 + z + k) * 0.1) + 1) * 10);
+    for (int i = 0; i < CHUNK_SIZE; ++i) {
+        for (int k = 0; k < CHUNK_SIZE; ++k) {
+            int h = (int) ((n.PerlinNoise((cx * CHUNK_SIZE + x + i) * 0.1,
+                                          (cz * CHUNK_SIZE + z + k) * 0.1) + 1) * 10);
             int r = rand() % 1000 + 1;
             int t = CubeType::NONE;
             if (r % 7 == 0) {
@@ -181,22 +211,22 @@ void MapManager::loadFlower(int cx, int cz) {
 
 std::pair<int32_t, int32_t> getChunkVertex(int32_t x, int32_t z) {
     if (x < 0) {
-        if (x % 16 == 0) {
-            x = -(-x) / 16;
+        if (x % CHUNK_SIZE == 0) {
+            x = -(-x) / CHUNK_SIZE;
         } else {
-            x = -(-x) / 16 - 1;
+            x = -(-x) / CHUNK_SIZE - 1;
         }
     } else {
-        x /= 16;
+        x /= CHUNK_SIZE;
     }
     if (z < 0) {
-        if (z % 16 == 0) {
-            z = -(-z) / 16;
+        if (z % CHUNK_SIZE == 0) {
+            z = -(-z) / CHUNK_SIZE;
         } else {
-            z = -(-z) / 16 - 1;
+            z = -(-z) / CHUNK_SIZE - 1;
         }
     } else {
-        z /= 16;
+        z /= CHUNK_SIZE;
     }
     return std::make_pair(x, z);
 }
