@@ -15,6 +15,8 @@
 #include "noise.h"
 #include "db/MCdb.h"
 #include "db/Hash.h"
+#include "model.h"
+#include "Cube.h"
 #include <string>
 #include <vector>
 
@@ -28,7 +30,8 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 // camera
-Camera camera(glm::vec3(256.0f, 20.0f, 256.0f));
+Camera camera(glm::vec3(0.0f, 15.0f, 3.0f));
+
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 
@@ -69,204 +72,22 @@ int main() {
         return -1;
     }
     glEnable(GL_DEPTH_TEST);
-
-    const float size = 1 / 16.0;
-    VertexData grassCube[] = {
-            //后面
-            {{-0.5f, -0.5f, -0.5f},
-                    {size,     15 * size}},
-            {{0.5f,  -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {2 * size, 1.0f}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, 0.5f,  -0.5f},
-                    {size,     1.0f}},
-            {{-0.5f, -0.5f, -0.5f},
-                    {size,     15 * size}},
-
-            //前面
-            {{-0.5f, -0.5f, 0.5f},
-                    {size,     15 * size}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{0.5f,  0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {size,     1.0f}},
-            {{-0.5f, -0.5f, 0.5f},
-                    {size,     15 * size}},
-            //左面
-            {{-0.5f, -0.5f, -0.5f},
-                    {size,     15 * size}},
-            {{-0.5f, -0.5f, 0.5f},
-                    {2 * size, 15 * size}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, 0.5f,  -0.5f},
-                    {size,     1.0f}},
-            {{-0.5f, -0.5f, -0.5f},
-                    {size,     15 * size}},
-            //右面
-            {{0.5f,  -0.5f, -0.5f},
-                    {size,     15 * size}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{0.5f,  0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {size,     1.0f}},
-            {{0.5f,  -0.5f, -0.5f},
-                    {size,     15 * size}},
-            //下面
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  -0.5f, -0.5f},
-                    {3 * size, 15 * size}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, -0.5f, 0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-
-            //上面
-
-            {{-0.5f, 0.5f,  -0.5f},
-                    {0.0f,     1.0f}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {size,     1.0f}},
-            {{0.5f,  0.5f,  0.5f},
-                    {size,     15 * size}},
-            {{0.5f,  0.5f,  0.5f},
-                    {size,     15 * size}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {0.0f,     15 * size}},
-            {{-0.5f, 0.5f,  -0.5f},
-                    {0.0f,     1.0f}},
-    };
-
-    VertexData soilCube[] = {
-            //后面
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  -0.5f, -0.5f},
-                    {3 * size, 15 * size}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, 0.5f,  -0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-
-            //前面
-            {{-0.5f, -0.5f, 0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {3 * size, 15 * size}},
-            {{0.5f,  0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, -0.5f, 0.5f},
-                    {2 * size, 15 * size}},
-            //左面
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            {{-0.5f, -0.5f, 0.5f},
-                    {3 * size, 15 * size}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, 0.5f,  -0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            //右面
-            {{0.5f,  -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {3 * size, 15 * size}},
-            {{0.5f,  0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {2 * size, 1.0f}},
-            {{0.5f,  -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            //下面
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  -0.5f, -0.5f},
-                    {3 * size, 15 * size}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  -0.5f, 0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, -0.5f, 0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, -0.5f, -0.5f},
-                    {2 * size, 15 * size}},
-
-            //上面
-
-            {{-0.5f, 0.5f,  -0.5f},
-                    {2 * size, 15 * size}},
-            {{0.5f,  0.5f,  -0.5f},
-                    {3 * size, 15 * size}},
-            {{0.5f,  0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{0.5f,  0.5f,  0.5f},
-                    {3 * size, 1.0f}},
-            {{-0.5f, 0.5f,  0.5f},
-                    {2 * size, 1.0f}},
-            {{-0.5f, 0.5f,  -0.5f},
-                    {2 * size, 15 * size}},
-    };
-
-    std::string file = "textures/DefaultPack.png";
-    TextureAtlas tex(file);
-    Shader grassShader("shaders/grass.vs", "shaders/grass.fs");
-    unsigned int VBO_grass, VAO_grass;
-    glGenVertexArrays(1, &VAO_grass);
-    glGenBuffers(1, &VBO_grass);
-    glBindVertexArray(VAO_grass);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_grass);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(grassCube), grassCube, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                          (void *) (sizeof(grassCube[0].position)));
-
-    Shader soilShader("shaders/soil.vs", "shaders/soil.fs");
-    unsigned int VAO_soil, VBO_soil;
-    glGenVertexArrays(1, &VAO_soil);
-    glGenBuffers(1, &VBO_soil);
-    glBindVertexArray(VAO_soil);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_soil);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(soilCube), soilCube, GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                          (void *) (sizeof(soilCube[0].position)));
+	std::string file = "textures/texture.png";
+	TextureAtlas tex(file);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     MCdb db(MCdb::Type::SQLITE);
     db.initDB("MineCraft", "localhost", "root", "233");
 
+    //Model firTree("C:/Users/13353/Desktop/code/CG/Project/Project/obj/Wooden-Watch-Tower/wooden watch tower2.fbx");
+    Model firTree("C:/Users/13353/Desktop/code/CG/Project/Project/obj/cat/Cat.obj");
+
+    Shader modelShader("shaders/model.vs", "shaders/model.fs");
+    //Shader modelShader("1.model_loading.vs", "1.model_loading.fs");
     Perlin noise;
+	Cube cube;
+
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -274,13 +95,34 @@ int main() {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        modelShader.use();
+        // view/projection transformations
+        glm::mat4 projection_model = glm::perspective(glm::radians(camera.Zoom),
+                                                      (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f,
+                                                      100.0f);
+        glm::mat4 view_model = camera.GetViewMatrix();
+
+        modelShader.setMat4("projection", projection_model);
+        modelShader.setMat4("view", view_model);
+
+        // render the loaded model
+        glm::mat4 model_ = glm::mat4(1.0f);
+        model_ = glm::translate(model_, glm::vec3(0.0f, 10.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model_ = glm::scale(model_, glm::vec3(0.01f, 0.01f, 0.01f));	// it's a bit too big for our scene, so scale it down
+		model_ = glm::rotate(model_, -1.57f, glm::vec3(1, 0, 0));
+		modelShader.setMat4("model", model_);
+        firTree.Draw(modelShader);
+
         tex.TexActivate();
         tex.BindTexture();
         camera.ProcessJump();
 
+
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f,
                                                 100.0f);
+
         glm::mat4 view = camera.GetViewMatrix();
 
         //用hash来判断chunk id
@@ -290,6 +132,8 @@ int main() {
                                   chunkid + 32, chunkid + 32, chunkid + 33,
                                   chunkid - 31, chunkid - 32, chunkid - 33};
 //        int chunshouldshow[]
+
+		
         for (int s = 0; s < 9; s++) {
             if (Chunkvisited[chunkshouldshow[s]]) {
                 string select_query;
@@ -299,43 +143,35 @@ int main() {
                 db.execSQL(select_query, result);
                 for (const auto &row : result) {
                     if (row.empty()) break;
-
                     // mysql_num_fields()返回结果集中的字段数
+					glm::vec3 pos = glm::vec3(stoi(row[1]), stoi(row[2]), stoi(row[3]));
                     if (stoi(row[4]) == 0) {
-                        glBindVertexArray(VAO_soil);
-                        glBindBuffer(GL_ARRAY_BUFFER, VBO_soil);
-                        glEnableVertexAttribArray(2);
-                        glEnableVertexAttribArray(3);
-                        soilShader.use();
-                        glUniform1i(glGetUniformLocation(soilShader.ID, "soil"), 0);
-
-                        soilShader.setMat4("projection", projection);
-                        soilShader.setMat4("view", view);
-
-                        glm::vec3 pos = glm::vec3(stoi(row[1]), stoi(row[2]), stoi(row[3]));
-                        glm::mat4 model = glm::mat4(1.0f);
-                        model = glm::translate(model, pos);
-                        soilShader.setMat4("model", model);
-                        glDrawArrays(GL_TRIANGLES, 0, 36);
+						cube.Draw("soil", pos, projection, view);
                     } else if (stoi(row[4]) == 1) {
-                        glBindVertexArray(VAO_grass);
-                        glBindBuffer(GL_ARRAY_BUFFER, VBO_grass);
-                        glEnableVertexAttribArray(0);
-                        glEnableVertexAttribArray(1);
-                        grassShader.use();
-                        grassShader.setMat4("projection", projection);
-                        glm::mat4 view = camera.GetViewMatrix();
-                        grassShader.setMat4("view", view);
-                        glUniform1i(glGetUniformLocation(grassShader.ID, "grass"), 0);
-
-                        soilShader.setMat4("projection", projection);
-                        soilShader.setMat4("view", view);
-                        glm::vec3 pos = glm::vec3(stoi(row[1]), stoi(row[2]), stoi(row[3]));
-                        glm::mat4 model = glm::mat4(1.0f);
-                        model = glm::translate(model, pos);
-                        grassShader.setMat4("model", model);
-                        glDrawArrays(GL_TRIANGLES, 0, 36);
-                    }
+						glm::mat4 view = camera.GetViewMatrix();
+						cube.Draw("grass", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 2) {
+						cube.Draw("highGrass", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 3) {
+						cube.Draw("flower_1", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 4) {
+						cube.Draw("flower_2", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 5) {
+						cube.Draw("flower_3", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 6) {
+						cube.Draw("flower_4", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 7) {
+						cube.Draw("flower_5", pos, projection, view);
+					}
+					else if (stoi(row[4]) == 8) {
+						cube.Draw("flower_6", pos, projection, view);
+					}
                 }
             } else {
                 string create_query =
@@ -368,6 +204,56 @@ int main() {
                                 + to_string(i) + "," + to_string(t) + "," + to_string(k)
                                 + "," + to_string(int(1)) + ")";
                         querys.push_back(tmpquery);
+						int r = rand() % 1000 + 1;
+						if (r % 7 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t+1) + "," + to_string(k)
+								+ "," + to_string(int(2)) + ")";
+							querys.push_back(tmpquery);
+						}
+						else if (r % 16 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t + 1) + "," + to_string(k)
+								+ "," + to_string(int(3)) + ")";
+							querys.push_back(tmpquery);
+						}
+						else if (r % 20 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t + 1) + "," + to_string(k)
+								+ "," + to_string(int(4)) + ")";
+							querys.push_back(tmpquery);
+						}
+						else if (r % 20 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t + 1) + "," + to_string(k)
+								+ "," + to_string(int(5)) + ")";
+							querys.push_back(tmpquery);
+						}
+						else if (r % 20 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t + 1) + "," + to_string(k)
+								+ "," + to_string(int(6)) + ")";
+							querys.push_back(tmpquery);
+						}
+						else if (r % 24 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t + 1) + "," + to_string(k)
+								+ "," + to_string(int(7)) + ")";
+							querys.push_back(tmpquery);
+						}
+						else if (r % 24 == 0) {
+							string tmpquery =
+								"(" + to_string(chunkshouldshow[s]) + ","
+								+ to_string(i) + "," + to_string(t + 1) + "," + to_string(k)
+								+ "," + to_string(int(8)) + ")";
+							querys.push_back(tmpquery);
+						}
                     }
                 }
                 string insertQuery =
@@ -381,6 +267,9 @@ int main() {
                 Chunkvisited[chunkshouldshow[s]] = 1;
             }
         }
+
+
+
         glUseProgram(0);
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -389,10 +278,7 @@ int main() {
 //    "drop table MineCraft.block1;";
 //    db.execSQL(delete_table);
 
-    glDeleteVertexArrays(1, &VAO_grass);
-    glDeleteBuffers(1, &VBO_grass);
-    glDeleteVertexArrays(1, &VAO_soil);
-    glDeleteBuffers(1, &VBO_soil);
+
 
 
     glfwTerminate();

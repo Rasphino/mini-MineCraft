@@ -18,32 +18,32 @@ public:
         Number_Of_Octaves = 4;
     }
     
-    double Noise(int x,int y)    // 根据(x,y)获取一个初步噪声值
+    double Noise(int x,int y)   
     {
         int n = x + y * 57;
         n = (n<<13) ^ n;
         return ( 1.0 - ( (n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
     }
     
-    double SmoothedNoise(int x, int y)   //光滑噪声
+    double SmoothedNoise(int x, int y)
     {
         double corners = ( Noise(x-1, y-1)+Noise(x+1, y-1)+Noise(x-1, y+1)+Noise(x+1, y+1) ) / 16;
         double sides = ( Noise(x-1, y) +Noise(x+1, y) +Noise(x, y-1) +Noise(x, y+1) ) / 8;
         double center = Noise(x, y) / 4;
         return corners + sides + center;
     }
-    double Cosine_Interpolate(double a,double b, double x)  // 余弦插值
+    double Cosine_Interpolate(double a,double b, double x)
     {
         double ft = x * 3.1415927;
         double f = (1 - cos(ft)) * 0.5;
         return a*(1-f) + b*f;
     }
-    double Linear_Interpolate(double a, double b, double x) //线性插值
+    double Linear_Interpolate(double a, double b, double x)
     {
         return a*(1-x) + b*x;
     }
     
-    double InterpolatedNoise(float x,float y)   // 获取插值噪声
+    double InterpolatedNoise(float x,float y)
     {
         int integer_X = int(x);
         float  fractional_X = x - integer_X;
@@ -58,7 +58,7 @@ public:
         return Cosine_Interpolate(i1, i2, fractional_Y);
     }
     
-    double PerlinNoise(float x,float y)    // 最终调用：根据(x,y)获得其对应的PerlinNoise值
+    double PerlinNoise(float x,float y)
     {
         double noise = 0;
         double p = persistence;

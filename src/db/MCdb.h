@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+//#include <mysql.h>
 #include <sqlite3.h>
 
 using Record = std::vector<std::string>;
@@ -20,7 +21,7 @@ using Records = std::vector<Record>;
 class MCdb {
 public:
     enum Type {
-        SQLITE
+        MYSQL, SQLITE
     };
     Type type;
     explicit MCdb(Type t);
@@ -32,6 +33,7 @@ public:
     bool execSQL(char *sql);
     bool execSQL(char *sql, Records &r);
 private:
+
     // Sqlite part
     ::sqlite3 *db;
     int rc;

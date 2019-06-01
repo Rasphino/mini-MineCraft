@@ -16,6 +16,7 @@ using namespace std;
 
 MCdb::MCdb(MCdb::Type t) : type(t) {
     switch (t) {
+
         case SQLITE: {
             // Skip, nothing to do.
             break;
@@ -25,6 +26,7 @@ MCdb::MCdb(MCdb::Type t) : type(t) {
 
 MCdb::~MCdb() {
     switch (type) {
+
         case SQLITE: {
             if (db != nullptr)
                 sqlite3_close(db);
@@ -35,6 +37,7 @@ MCdb::~MCdb() {
 
 bool MCdb::initDB(std::string db_name, std::string host, std::string user, std::string passwd) {
     switch (type) {
+
         case SQLITE: {
             rc = sqlite3_open(db_name.c_str(), &db);
             if (rc) {
@@ -50,6 +53,7 @@ bool MCdb::initDB(std::string db_name, std::string host, std::string user, std::
 
 bool MCdb::execSQL(string &sql) {
     switch (type) {
+
         case SQLITE: {
             rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, nullptr);
             if (rc != SQLITE_OK) {
@@ -78,6 +82,7 @@ int MCdb::sqliteCallback(void *p_data, int num_fields, char **p_fields, char **p
 
 bool MCdb::execSQL(std::string &sql, Records &r) {
     switch (type) {
+
         case SQLITE: {
             char *errMsg;
             rc = sqlite3_exec(db, sql.c_str(), sqliteCallback, &r, &errMsg);
@@ -94,6 +99,7 @@ bool MCdb::execSQL(std::string &sql, Records &r) {
 
 bool MCdb::execSQL(char *sql) {
     switch (type) {
+
         case SQLITE: {
             rc = sqlite3_exec(db, sql, nullptr, nullptr, nullptr);
             if (rc != SQLITE_OK) {
@@ -110,6 +116,7 @@ bool MCdb::execSQL(char *sql) {
 
 bool MCdb::execSQL(char *sql, Records &r) {
     switch (type) {
+
         case SQLITE: {
             char *errMsg;
             rc = sqlite3_exec(db, sql, sqliteCallback, &r, &errMsg);
