@@ -10,33 +10,12 @@ MapManager::MapManager() {
     cache = new Cache[3];
     db = new MCdb(MCdb::Type::SQLITE);
     db->initDB("MineCraft");
-    std::string createQuery = "create table if not exists block"
-                              "("
-                              "    chunkID UNSIGNED BIG INT not null,"
-                              "    x int not null,"
-                              "    y int not null,"
-                              "    z int not null,"
-                              "    blockType int not null,"
-                              "    primary key(x, y, z)"
-                              ");";
-    db->execSQL(createQuery);
 }
 
 MapManager::MapManager(glm::vec3 &pos) {
     cache = new Cache[3];
     db = new MCdb(MCdb::Type::SQLITE);
     db->initDB("MineCraft");
-    std::string createQuery = "create table if not exists block"
-                              "("
-                              "    chunkID UNSIGNED BIG INT not null,"
-                              "    x int not null,"
-                              "    y int not null,"
-                              "    z int not null,"
-                              "    blockType int not null,"
-                              "    primary key(x, y, z)"
-                              ");";
-    db->execSQL(createQuery);
-
     genCacheMap(pos);
     p = pos;
     genCacheFromNoise();
