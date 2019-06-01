@@ -210,4 +210,3 @@ uint64_t getID(std::pair<int32_t, int32_t> p) {
 uint64_t getID(int x, int z) {
     return getID(getChunkVertex(x, z));
 }
-

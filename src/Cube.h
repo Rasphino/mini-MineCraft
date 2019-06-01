@@ -30,7 +30,7 @@ private:
 
 public:
     Cube();
-    void Draw(std::string Name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view);
+    void Draw(std::string Name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view, glm::vec3 camerapos);
     ~Cube();
 };
 
