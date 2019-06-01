@@ -22,7 +22,8 @@ using Cache = Chunk[3][3];
 class MapManager {
 public:
     enum BlockType {
-        NONE, SOIL, GRASS
+        NONE = -1, SOIL, GRASS, HIGHGRASS, FLOWER_1,
+        FLOWER_2, FLOWER_3, FLOWER_4, FLOWER_5, FLOWER_6
     };
     MapManager();
     MapManager(glm::vec3 &pos);
