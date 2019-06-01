@@ -1,15 +1,15 @@
 ## 1. 对fragment shader进行了更改 
 主要如下
-可以调整maxDist minDist来改变雾的效果
-float dist = length((cameraPos - cubePos).xyz);//计算方块与camera对距离
-float maxDist = 50;//雾最远位置
-float minDist = 20;//雾最近位置
-vec3 fogcolor = vec3(0.5, 0.5, 0.5);//雾的颜色
-float fogFactor = (maxDist - dist) / (maxDist - minDist);
-fogFactor = clamp( fogFactor, 0.0, 1.0 );//如果fogFactor <0就取0， >1就取1
-vec3 color = mix(fogcolor, texColor, fogFactor);
-FragColor = vec4(color, 1.0);
-
+可以调整maxDist minDist来改变雾的效果. 
+float dist = length((cameraPos - cubePos).xyz);//计算方块与camera对距离. 
+float maxDist = 50;//雾最远位置 
+float minDist = 20;//雾最近位置 
+vec3 fogcolor = vec3(0.5, 0.5, 0.5);//雾的颜色 
+float fogFactor = (maxDist - dist) / (maxDist - minDist); 
+fogFactor = clamp( fogFactor, 0.0, 1.0 );//如果fogFactor <0就取0， >1就取1 
+vec3 color = mix(fogcolor, texColor, fogFactor); 
+FragColor = vec4(color, 1.0); 
+ 
 ## 2. cube.cpp中draw函数增加了cameraPos参数
 ```cpp
 void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos)
