@@ -837,7 +837,7 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
 
 }
 
-void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view) {
+void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view, glm::vec3 cameraPos) {
 
     if (name == "soil") {
         glBindVertexArray(VAO_soil);
@@ -845,13 +845,15 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         glEnableVertexAttribArray(2);
         glEnableVertexAttribArray(3);
         soilShader.use();
-        glUniform1i(glGetUniformLocation(soilShader.ID, "soil"), 0);
         soilShader.setMat4("projection", projection);
         soilShader.setMat4("view", view);
+        glUniform1i(glGetUniformLocation(soilShader.ID, "soil"), 0);
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
         soilShader.setMat4("model", model);
+        soilShader.setVec3("cubePos", pos);
+        soilShader.setVec3("cameraPos", cameraPos);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "grass") {
         glBindVertexArray(VAO_grass);
@@ -863,13 +865,12 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         grassShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(grassShader.ID, "grass"), 0);
 
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
         grassShader.setMat4("model", model);
+        grassShader.setVec3("cubePos", pos);
+        grassShader.setVec3("cameraPos", cameraPos);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
     } else if (name == "highGrass") {
         glBindVertexArray(VAO_highGrass);
         glBindBuffer(GL_ARRAY_BUFFER, VBO_highGrass);
@@ -880,10 +881,12 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
+
+
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "flower_1") {
@@ -896,10 +899,10 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "flower_2") {
@@ -912,10 +915,10 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "flower_3") {
@@ -928,10 +931,10 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "flower_4") {
@@ -944,10 +947,10 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "flower_5") {
@@ -960,10 +963,10 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == "flower_6") {
@@ -976,10 +979,10 @@ void Cube::Draw(std::string name, glm::vec3 pos, glm::mat4 projection, glm::mat4
         transparentShader.setMat4("view", view);
         glUniform1i(glGetUniformLocation(transparentShader.ID, "highGrass"),
                     0);
-        soilShader.setMat4("projection", projection);
-        soilShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pos);
+        transparentShader.setVec3("cubePos", pos);
+        transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
