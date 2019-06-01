@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "noise.h"
+#include "MCdb.h"
 
 std::pair<int32_t, int32_t> getChunkVertex(int32_t x, int32_t z);
 uint64_t getID(std::pair<int32_t, int32_t> p);
@@ -31,6 +32,8 @@ public:
     void genCacheMap(glm::vec3 &pos);
     void updateCacheMap(glm::vec3 &pos);
     void genCacheFromNoise();
+    void loadFlower(int cx, int cz);
+    void genFlower(int cx, int cz);
     Cache *getCache();
     std::pair<int32_t, int32_t> getCacheVertexCoord();
 
@@ -40,6 +43,7 @@ private:
     std::array<std::array<uint64_t, 3>, 3> cacheMap;
     glm::vec3 p;
     Perlin n;
+    MCdb *db;
 
 };
 

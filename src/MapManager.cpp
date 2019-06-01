@@ -8,10 +8,35 @@
 
 MapManager::MapManager() {
     cache = new Cache[3];
+    db = new MCdb(MCdb::Type::SQLITE);
+    db->initDB("MineCraft");
+    std::string createQuery = "create table if not exists block"
+                              "("
+                              "    chunkID UNSIGNED BIG INT not null,"
+                              "    x int not null,"
+                              "    y int not null,"
+                              "    z int not null,"
+                              "    blockType int not null,"
+                              "    primary key(x, y, z)"
+                              ");";
+    db->execSQL(createQuery);
 }
 
 MapManager::MapManager(glm::vec3 &pos) {
     cache = new Cache[3];
+    db = new MCdb(MCdb::Type::SQLITE);
+    db->initDB("MineCraft");
+    std::string createQuery = "create table if not exists block"
+                              "("
+                              "    chunkID UNSIGNED BIG INT not null,"
+                              "    x int not null,"
+                              "    y int not null,"
+                              "    z int not null,"
+                              "    blockType int not null,"
+                              "    primary key(x, y, z)"
+                              ");";
+    db->execSQL(createQuery);
+
     genCacheMap(pos);
     p = pos;
     genCacheFromNoise();
@@ -19,6 +44,7 @@ MapManager::MapManager(glm::vec3 &pos) {
 
 MapManager::~MapManager() {
     delete[] cache;
+    delete db;
 }
 
 void MapManager::genCacheMap(glm::vec3 &pos) {
@@ -28,8 +54,8 @@ void MapManager::genCacheMap(glm::vec3 &pos) {
     cacheMap[1][0] = getID(int(pos[0]), int(pos[2] - 16));
     cacheMap[1][1] = getID(int(pos[0]), int(pos[2]));
     cacheMap[1][2] = getID(int(pos[0]), int(pos[2] + 16));
-    cacheMap[2][0] = getID(int(pos[0] - 16), int(pos[2] + 16));
-    cacheMap[2][1] = getID(int(pos[0]), int(pos[2] + 16));
+    cacheMap[2][0] = getID(int(pos[0] + 16), int(pos[2] - 16));
+    cacheMap[2][1] = getID(int(pos[0] + 16), int(pos[2]));
     cacheMap[2][2] = getID(int(pos[0] + 16), int(pos[2] + 16));
 }
 
@@ -38,6 +64,7 @@ void MapManager::updateCacheMap(glm::vec3 &pos) {
     if (getID(int(p[0]), int(p[2])) == getID(int(pos[0]), int(pos[2]))) {
         return;
     }
+    std::clog << p[0] << p[2] << std::endl;
 
     genCacheMap(pos);
     p = pos;
@@ -54,10 +81,8 @@ void MapManager::genCacheFromNoise() {
         for (int cz = 0; cz < 3; ++cz) {
             for (int i = 0; i < 16; ++i) {
                 for (int k = 0; k < 16; ++k) {
-                    int h = (int) (
-                            (n.PerlinNoise((cx * 16 + x + i) * 0.1, (cz * 16 + z + k) * 0.1) +
-                             1) *
-                            10);
+                    int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
+                                                  (cz * 16 + z + k) * 0.1) + 1) * 10);
                     for (int j = 0; j < h; ++j) {
                         (*cache)[cx][cz][i][j][k] = BlockType::SOIL;
                     }
@@ -67,9 +92,10 @@ void MapManager::genCacheFromNoise() {
                     (*cache)[cx][cz][i][h][k] = BlockType::GRASS;
                 }
             }
+
+            loadFlower(cx, cz);
         }
     }
-
 }
 
 Cache *MapManager::getCache() {
@@ -82,6 +108,74 @@ std::pair<int32_t, int32_t> MapManager::getCacheVertexCoord() {
     x--;
     z--;
     return std::pair<int32_t, int32_t>(x * 16, z * 16);
+}
+
+void MapManager::genFlower(int cx, int cz) {
+    int x, z;
+    std::tie(x, z) = getChunkVertex(p[0], p[2]);
+    x = (x - 1) * 16;
+    z = (z - 1) * 16;
+
+    for (int i = 0; i < 16; ++i) {
+        for (int k = 0; k < 16; ++k) {
+            int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
+                                          (cz * 16 + z + k) * 0.1) + 1) * 10);
+            int r = rand() % 1000 + 1;
+            int t = BlockType::NONE;
+            if (r % 7 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::HIGHGRASS;
+                t = BlockType::HIGHGRASS;
+            } else if (r % 16 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_1;
+                t = BlockType::FLOWER_1;
+            } else if (r % 20 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_2;
+                t = BlockType::FLOWER_2;
+            } else if (r % 20 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_3;
+                t = BlockType::FLOWER_3;
+            } else if (r % 20 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_4;
+                t = BlockType::FLOWER_4;
+            } else if (r % 24 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_5;
+                t = BlockType::FLOWER_5;
+            } else if (r % 24 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_6;
+                t = BlockType::FLOWER_6;
+            }
+            if (t != BlockType::NONE) {
+                std::string saveQuery = "insert or replace into block values (" +
+                                        std::to_string(cacheMap[cx][cz]) + ", " +
+                                        std::to_string(i) + ", " +
+                                        std::to_string(h + 1) + ", " +
+                                        std::to_string(k) + ", " +
+                                        std::to_string(t) + ") ";
+                db->execSQL(saveQuery);
+            }
+        }
+    }
+}
+
+
+void MapManager::loadFlower(int cx, int cz) {
+    Records result;
+    std::string q = "select * from block where chunkID = " + std::to_string(cacheMap[cx][cz]);
+    db->execSQL(q, result);
+    if (result.empty()) {
+        genFlower(cx, cz);
+    } else {
+        for (const auto &row : result) {
+            if (row.empty()) break;
+            int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);
+            int t = stoi(row[4]);
+            if (t >= BlockType::HIGHGRASS && t <= BlockType::FLOWER_6) {
+                (*cache)[cx][cz][x][y][z] = t;
+            }
+        }
+    }
+
+
 }
 
 std::pair<int32_t, int32_t> getChunkVertex(int32_t x, int32_t z) {

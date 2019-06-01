@@ -81,8 +81,6 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
-    MCdb db(MCdb::Type::SQLITE);
-    db.initDB("MineCraft");
     MapManager mapManager(camera.Position);
 
     Model firTree("objs/cat/Cat.obj");
