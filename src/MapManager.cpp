@@ -116,6 +116,8 @@ void MapManager::genFlower(int cx, int cz) {
     x = (x - 1) * 16;
     z = (z - 1) * 16;
 
+    std::vector<std::string> querys;
+
     for (int i = 0; i < 16; ++i) {
         for (int k = 0; k < 16; ++k) {
             int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
@@ -145,26 +147,48 @@ void MapManager::genFlower(int cx, int cz) {
                 t = BlockType::FLOWER_6;
             }
             if (t != BlockType::NONE) {
-                std::string saveQuery = "insert or replace into block values (" +
-                                        std::to_string(cacheMap[cx][cz]) + ", " +
-                                        std::to_string(i) + ", " +
-                                        std::to_string(h + 1) + ", " +
-                                        std::to_string(k) + ", " +
-                                        std::to_string(t) + ") ";
-                db->execSQL(saveQuery);
+                std::string tmpQuery = "(" + std::to_string(cacheMap[cx][cz]) + ", " +
+                                       std::to_string(i) + ", " +
+                                       std::to_string(h + 1) + ", " +
+                                       std::to_string(k) + ", " +
+                                       std::to_string(t) + ") ";
+                querys.push_back(tmpQuery);
             }
         }
     }
+    std::string insertQuery =
+            "replace into block" + std::to_string(cacheMap[cx][cz]) + " values ";
+    int i = 0;
+    for (i = 0; i < querys.size() - 1; i++) {
+        insertQuery += querys[i] + ",";
+    }
+    insertQuery += querys[i] + ";";
+    db->execSQL(insertQuery);
+
 }
 
 
 void MapManager::loadFlower(int cx, int cz) {
+    std::string createQuery =
+            "create table if not exists block" + std::to_string(cacheMap[cx][cz]) +
+            "("
+            "    chunkID UNSIGNED BIG INT not null,"
+            "    x int not null,"
+            "    y int not null,"
+            "    z int not null,"
+            "    blockType int not null,"
+            "    primary key(x, y, z)"
+            ");";
+    db->execSQL(createQuery);
+
     Records result;
-    std::string q = "select * from block where chunkID = " + std::to_string(cacheMap[cx][cz]);
+    std::string q = "select * from block" + std::to_string(cacheMap[cx][cz]);
     db->execSQL(q, result);
     if (result.empty()) {
+        std::clog << "gen" << std::endl;
         genFlower(cx, cz);
     } else {
+        std::clog << "read" << std::endl;
         for (const auto &row : result) {
             if (row.empty()) break;
             int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);
@@ -174,8 +198,6 @@ void MapManager::loadFlower(int cx, int cz) {
             }
         }
     }
-
-
 }
 
 std::pair<int32_t, int32_t> getChunkVertex(int32_t x, int32_t z) {
