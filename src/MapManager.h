@@ -35,6 +35,8 @@ public:
 
     void updateCacheMap(glm::vec3 &pos);
     void genCacheFromNoise();
+    void loadFlower(int cx, int cz);
+    void genFlower(int cx, int cz);
     Cache *getCache();
     std::pair<int32_t, int32_t> getCacheVertexCoord();
 

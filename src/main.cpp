@@ -112,6 +112,7 @@ int main() {
                 for (int i = 0; i < CHUNK_SIZE; i++) {
                     for (int k = 0; k < CHUNK_SIZE; k++) {
                         for (int j = 0; j < 64; j++) {
+
                             glm::vec3 pos = glm::vec3(cx * CHUNK_SIZE + x + i, j,
                                                       cz * CHUNK_SIZE + z + k);
                             if ((*mapCache)[cx][cz][i][j][k] != CubeType::NONE) {

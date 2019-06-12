@@ -83,6 +83,7 @@ void MapManager::updateCacheMap(glm::vec3 &pos) {
 void MapManager::genCacheFromNoise() {
     int x, z;
     std::tie(x, z) = getChunkVertex(p[0], p[2]);
+
     x = (x - CHUNK_NUM / 2) * CHUNK_SIZE;
     z = (z - CHUNK_NUM / 2) * CHUNK_SIZE;
 
@@ -203,6 +204,96 @@ void MapManager::loadFlower(int cx, int cz) {
             int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);
             int t = stoi(row[4]);
             if (t >= CubeType::HIGHGRASS && t <= CubeType::FLOWER_6) {
+                (*cache)[cx][cz][x][y][z] = t;
+            }
+        }
+    }
+}
+
+void MapManager::genFlower(int cx, int cz) {
+    int x, z;
+    std::tie(x, z) = getChunkVertex(p[0], p[2]);
+    x = (x - 1) * 16;
+    z = (z - 1) * 16;
+
+    std::vector<std::string> querys;
+
+    for (int i = 0; i < 16; ++i) {
+        for (int k = 0; k < 16; ++k) {
+            int h = (int) ((n.PerlinNoise((cx * 16 + x + i) * 0.1,
+                                          (cz * 16 + z + k) * 0.1) + 1) * 10);
+            int r = rand() % 1000 + 1;
+            int t = BlockType::NONE;
+            if (r % 7 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::HIGHGRASS;
+                t = BlockType::HIGHGRASS;
+            } else if (r % 16 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_1;
+                t = BlockType::FLOWER_1;
+            } else if (r % 20 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_2;
+                t = BlockType::FLOWER_2;
+            } else if (r % 20 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_3;
+                t = BlockType::FLOWER_3;
+            } else if (r % 20 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_4;
+                t = BlockType::FLOWER_4;
+            } else if (r % 24 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_5;
+                t = BlockType::FLOWER_5;
+            } else if (r % 24 == 0) {
+                (*cache)[cx][cz][i][h + 1][k] = BlockType::FLOWER_6;
+                t = BlockType::FLOWER_6;
+            }
+            if (t != BlockType::NONE) {
+                std::string tmpQuery = "(" + std::to_string(cacheMap[cx][cz]) + ", " +
+                                       std::to_string(i) + ", " +
+                                       std::to_string(h + 1) + ", " +
+                                       std::to_string(k) + ", " +
+                                       std::to_string(t) + ") ";
+                querys.push_back(tmpQuery);
+            }
+        }
+    }
+    std::string insertQuery =
+            "replace into block" + std::to_string(cacheMap[cx][cz]) + " values ";
+    int i = 0;
+    for (i = 0; i < querys.size() - 1; i++) {
+        insertQuery += querys[i] + ",";
+    }
+    insertQuery += querys[i] + ";";
+    db->execSQL(insertQuery);
+
+}
+
+
+void MapManager::loadFlower(int cx, int cz) {
+    std::string createQuery =
+            "create table if not exists block" + std::to_string(cacheMap[cx][cz]) +
+            "("
+            "    chunkID UNSIGNED BIG INT not null,"
+            "    x int not null,"
+            "    y int not null,"
+            "    z int not null,"
+            "    blockType int not null,"
+            "    primary key(x, y, z)"
+            ");";
+    db->execSQL(createQuery);
+
+    Records result;
+    std::string q = "select * from block" + std::to_string(cacheMap[cx][cz]);
+    db->execSQL(q, result);
+    if (result.empty()) {
+        std::clog << "gen" << std::endl;
+        genFlower(cx, cz);
+    } else {
+        std::clog << "read" << std::endl;
+        for (const auto &row : result) {
+            if (row.empty()) break;
+            int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);
+            int t = stoi(row[4]);
+            if (t >= BlockType::HIGHGRASS && t <= BlockType::FLOWER_6) {
                 (*cache)[cx][cz][x][y][z] = t;
             }
         }

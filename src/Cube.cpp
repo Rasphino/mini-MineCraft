@@ -873,6 +873,7 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         grassShader.setVec3("cameraPos", cameraPos);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::HIGHGRASS) {
+    } else if (name == "highGrass") {
         glBindVertexArray(VAO_highGrass);
         glBindBuffer(GL_ARRAY_BUFFER, VBO_highGrass);
         glEnableVertexAttribArray(4);
