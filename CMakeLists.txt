@@ -3,11 +3,13 @@ project(Ex0)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(assimp REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 find_package(glew REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(sqlite3 REQUIRED)
+
+message("assimp: ${ASSIMP_LIBRARIES}")
 
 include_directories(src/glad/include)
 
@@ -18,7 +20,7 @@ set(HEADERS src/Shader.h src/stb_image.h src/Camera.h
         src/MapManager.h src/Cube.cpp src/Cube.h)
 
 add_executable(Ex0 ${SOURCES} ${HEADERS})
-target_link_libraries(Ex0 PRIVATE assimp)
+target_link_libraries(Ex0 PRIVATE ${ASSIMP_LIBRARIES})
 target_link_libraries(Ex0 PRIVATE GLEW::GLEW)
 target_link_libraries(Ex0 PRIVATE glfw)
 target_link_libraries(Ex0 PRIVATE glm)
