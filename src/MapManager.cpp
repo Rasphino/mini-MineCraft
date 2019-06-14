@@ -186,10 +186,10 @@ void MapManager::loadFlower(int cx, int cz) {
     std::string q = "select * from block" + std::to_string(cacheMap[cx][cz]);
     db->execSQL(q, result);
     if (result.empty()) {
-        std::clog << "gen" << std::endl;
+//        std::clog << "gen" << std::endl;
         genFlower(cx, cz);
     } else {
-        std::clog << "read" << std::endl;
+//        std::clog << "read" << std::endl;
         for (const auto& row : result) {
             if (row.empty()) break;
             int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);

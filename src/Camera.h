@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "MapManager.h"
 
 #include <vector>
 
@@ -15,13 +16,23 @@ enum Camera_Movement {
     RIGHT,
     JUMP,
     CROUCH,
-    TAB
+    TAB,
+    DOWN
+};
+
+enum direction {
+    front,
+    back,
+    goleft,
+    goright,
+    up,
+    down
 };
 
 // Default camera values
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 4.5f;
+const float SPEED = 5.0f;
 const float SENSITIVITY = 0.2f;
 const float ZOOM = 45.0f;
 
@@ -35,6 +46,8 @@ public:
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
+    glm::vec3 WorldDown;
+    glm::vec3 fix;
     // Euler Angles
     float Yaw;
     float Pitch;
@@ -42,72 +55,180 @@ public:
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
-    bool jump = false, crouch = false;
+    bool jump = false, crouch = false, stopJump = false;
     int jumpCounter = 0;
     int tab = 1;
+    float tempy;
+    float ground;
+    bool stopMove = false;
+    float fixn = 0.05;
 
     // Constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-           glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
+           glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+            //glm::vec3 down = glm::vec3(0.0f, -1.0f, 0.0f),
+           float yaw = YAW, float pitch = PITCH)
             : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED),
-              MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
+              MouseSensitivity(SENSITIVITY), Zoom(ZOOM), fix(glm::vec3(0.2f, 0.0f, 0.2f)) {
         Position = position;
         WorldUp = up;
+        //WorldDown = down;
         Yaw = yaw;
         Pitch = pitch;
+        tempy = Position.y;
         updateCameraVectors();
     }
-
+    /*
     // Constructor with scalar values
-    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw,
-           float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED),
-                          MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
+    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ,
+            //float downX, float downY, float downZ,
+            float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED),
+    MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
         Position = glm::vec3(posX, posY, posZ);
         WorldUp = glm::vec3(upX, upY, upZ);
+        //WorldDown = glm::vec3(downX, downY, downZ);
         Yaw = yaw;
         Pitch = pitch;
         updateCameraVectors();
     }
-
+    */
     // Returns the view matrix calculated using Euler Angles and the LookAt Matrix
     glm::mat4 GetViewMatrix() {
         return glm::lookAt(Position, Position + Front, Up);
     }
 
+    float vel;
+
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-        float velocity = MovementSpeed * deltaTime * 2;
-        if (direction == TAB) {
-            tab = -tab;
-            std::cout << "tab: " << tab << std::endl;
+        float velocity = MovementSpeed * deltaTime;
+        vel = velocity;
+        switch (direction) {
+            case TAB:
+                tab = -tab;  //tab = 1 -> fly
+//                std::cout << "tab: " << tab << std::endl;
+                break;
+            case FORWARD:
+                Position += Front * velocity;
+                //std::cout << "Front : " << Front.x << " " << Front.y << " " << Front.z << std::endl;
+                break;
+            case BACKWARD:
+                Position -= Front * velocity;
+                break;
+            case LEFT:
+                Position -= Right * velocity;
+                break;
+            case RIGHT:
+                Position += Right * velocity;
+                break;
+            case DOWN :
+                Position -= WorldUp * velocity;
+                tempy = Position.y;
+                break;
+            case JUMP:
+                std::cout << "jumpcounter: " << jumpCounter << std::endl;
+                std::cout << stopJump << std::endl;
+                if (tab == -1 && !stopJump) {
+                    jump = true;
+                } else if (tab == 1) {
+                    Position += WorldUp * velocity;
+                    jump = false;
+                    jumpCounter = 0;
+                } else {
+                    jump = false;
+                }
+                break;
         }
-        if (direction == FORWARD)
-            Position += Front * velocity;
-        if (direction == BACKWARD)
-            Position -= Front * velocity;
-        if (direction == LEFT)
-            Position -= Right * velocity;
-        if (direction == RIGHT)
-            Position += Right * velocity;
-
-        if (!jump && tab == -1) Position.y = 0;
-        if (direction == JUMP && tab == 1) {
-            Position += WorldUp * velocity;
-            jump = false;
-        } else if (direction == JUMP)
-            jump = true;
     }
 
-    void ProcessJump() {
-        if (jump && tab == -1) {
-            Position.y = 1.2 * sin(jumpCounter++ * glm::radians(7.5f));
-            if (jumpCounter % 24 == 0) {
-                jump = false;
+    void ProcessFall() {
+        bool fall = checkCollide(down);
+        if (tab == -1 && !jump && !fall) { //fall
+            Position.y -= 1;
+            stopJump = true;
+        } else if (tab == -1 && !jump && fall) { //on ground
+            Position.y = ground;
+            stopJump = false;
+        } else if (tab == -1 && jump) { //jump
+//            std::cout << "in jump: " << jumpCounter << std::endl;
+            Position.y += 0.4 * sin(jumpCounter++ * glm::radians(40.0f));
+//            std::cout << Position.y << std::endl;
+            if (jumpCounter % 5 == 0) {
                 jumpCounter = 0;
-                Position.y = 0;
+                jump = false;
+                stopJump = true;
             }
         }
     }
+
+    bool checkCollide(direction dir) {
+        glm::vec3 Next;
+        /*glm::vec3 smallNext;*/
+        MapManager nextMap(Position);
+        bool collide = false;
+        int x, z, cx, cz, ci, cj, ck;
+        /*int sx, sz, scx, scz, sci, scj, sck;*/
+        switch (dir) {
+            case front:
+                Next = Position + Front * vel;
+//                smallNext = Position + Front * fixn;
+//                        - fix;
+                break;
+            case back:
+                Next = Position - Front * vel;
+//                smallNext = Position - Front * fixn;
+                //+ fix;
+                break;
+            case goleft:
+                Next = Position - Right * vel;
+//                smallNext = Position - Right * fixn;
+                //- fix ;
+                break;
+            case goright:
+                Next = Position + Right * vel;
+//                smallNext = Position + Right * fixn;
+                //+ fix;
+                break;
+            case up:
+                Next = Position + WorldUp;
+                break;
+            case down:
+                Next = Position;
+        }
+        nextMap.updateCacheMap(Next);
+        Cache *mapCache = nextMap.getCache();
+        std::tie(x, z) = nextMap.getCacheVertexCoord();
+        cx = (Next[0] - x) / CHUNK_SIZE;
+        cz = (Next[2] - z) / CHUNK_SIZE;
+        ci = Next[0] - x - cx * CHUNK_SIZE;
+        ck = Next[2] - z - cz * CHUNK_SIZE;
+        cj = (int) Position[1] - 1;
+        /*
+        scx = (smallNext[0] - x) / CHUNK_SIZE;
+        scz = (smallNext[2] - z) / CHUNK_SIZE;
+        sci = smallNext[0] - x - scx * CHUNK_SIZE;
+        sck = smallNext[2] - z - scz * CHUNK_SIZE;
+        scj = (int) Position[1];*/
+
+        if (dir == up) cj++;
+        if (dir == down) cj--;
+
+//        std::cout << vel << std::endl;
+//        if(dir!=5) std::cout << dir <<  Position[0] << " " << Position[2] << " " << Next[0] << " " << Next[2] << std::endl;
+        /*
+         if(dir != up && dir != down){
+             if((*mapCache)[scx][scz][sci][scj][sck] == CubeType::SOIL || (*mapCache)[scx][scz][sci][scj][sck] == CubeType::GRASS)
+                 collide = true;
+         }*/
+
+        if ((*mapCache)[cx][cz][ci][cj][ck] == CubeType::SOIL ||
+            (*mapCache)[cx][cz][ci][cj][ck] == CubeType::GRASS) {
+            if (dir == down) ground = cj + 2.4;
+            collide = true;
+        }
+        return collide;
+    }
+
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
