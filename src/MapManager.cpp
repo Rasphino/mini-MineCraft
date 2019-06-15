@@ -74,6 +74,12 @@ void MapManager::updateCacheMap(glm::vec3& pos) {
     }
     std::clog << p[0] << p[2] << std::endl;
 
+    writeBack();
+    for (int cx = 0; cx < CHUNK_NUM; ++cx) {
+        for (int cz = 0; cz < CHUNK_NUM; ++cz) {
+            deltaList[cx][cz].clear();
+        }
+    }
     genCacheMap(pos);
     p = pos;
     genCacheFromNoise();
@@ -91,8 +97,9 @@ void MapManager::genCacheFromNoise() {
             for (int i = 0; i < CHUNK_SIZE; ++i) {
                 for (int k = 0; k < CHUNK_SIZE; ++k) {
                     int h =
-                        (int)((n.PerlinNoise((cx * CHUNK_SIZE + x + i) * 0.1, (cz * CHUNK_SIZE + z + k) * 0.1) + 1) *
-                              10);
+                            (int) ((n.PerlinNoise((cx * CHUNK_SIZE + x + i) * 0.1,
+                                                  (cz * CHUNK_SIZE + z + k) * 0.1) + 1) *
+                                   10);
                     for (int j = 0; j < h; ++j) {
                         (*cache)[cx][cz][i][j][k] = CubeType::SOIL;
                     }
@@ -103,12 +110,12 @@ void MapManager::genCacheFromNoise() {
                 }
             }
 
-            loadFlower(cx, cz);
+            loadDeltaBlock(cx, cz);
         }
     }
 }
 
-Cache* MapManager::getCache() { return cache; }
+Cache *MapManager::getCache() { return cache; }
 
 std::pair<int32_t, int32_t> MapManager::getCacheVertexCoord() {
     int x, z;
@@ -154,9 +161,11 @@ void MapManager::genFlower(int cx, int cz) {
                 t = CubeType::FLOWER_6;
             }
             if (t != CubeType::NONE) {
-                std::string tmpQuery = "(" + std::to_string(cacheMap[cx][cz]) + ", " + std::to_string(i) + ", " +
-                                       std::to_string(h + 1) + ", " + std::to_string(k) + ", " + std::to_string(t) +
-                                       ") ";
+                std::string tmpQuery =
+                        "(" + std::to_string(cacheMap[cx][cz]) + ", " + std::to_string(i) + ", " +
+                        std::to_string(h + 1) + ", " + std::to_string(k) + ", " +
+                        std::to_string(t) +
+                        ") ";
                 querys.push_back(tmpQuery);
             }
         }
@@ -170,33 +179,62 @@ void MapManager::genFlower(int cx, int cz) {
     db->execSQL(insertQuery);
 }
 
-void MapManager::loadFlower(int cx, int cz) {
-    std::string createQuery = "create table if not exists block" + std::to_string(cacheMap[cx][cz]) +
-                              "("
-                              "    chunkID UNSIGNED BIG INT not null,"
-                              "    x int not null,"
-                              "    y int not null,"
-                              "    z int not null,"
-                              "    blockType int not null,"
-                              "    primary key(x, y, z)"
-                              ");";
+void MapManager::loadDeltaBlock(int cx, int cz) {
+    std::string createQuery =
+            "create table if not exists block" + std::to_string(cacheMap[cx][cz]) +
+            "("
+            "    chunkID UNSIGNED BIG INT not null,"
+            "    x int not null,"
+            "    y int not null,"
+            "    z int not null,"
+            "    blockType int not null,"
+            "    primary key(x, y, z)"
+            ");";
     db->execSQL(createQuery);
 
     Records result;
     std::string q = "select * from block" + std::to_string(cacheMap[cx][cz]);
     db->execSQL(q, result);
     if (result.empty()) {
-//        std::clog << "gen" << std::endl;
         genFlower(cx, cz);
     } else {
-//        std::clog << "read" << std::endl;
-        for (const auto& row : result) {
+        for (const auto &row : result) {
             if (row.empty()) break;
             int x = stoi(row[1]), y = stoi(row[2]), z = stoi(row[3]);
             int t = stoi(row[4]);
-            if (t >= CubeType::HIGHGRASS && t <= CubeType::FLOWER_6) {
+            if (t >= CubeType::NONE && t <= CubeType::FLOWER_6) {
+//                deltaList[cx][cz].emplace_back(x, y, z, t);
                 (*cache)[cx][cz][x][y][z] = t;
             }
+        }
+    }
+}
+
+void MapManager::writeBack() {
+    for (int cx = 0; cx < CHUNK_NUM; ++cx) {
+        for (int cz = 0; cz < CHUNK_NUM; ++cz) {
+            if (deltaList[cx][cz].empty()) {
+                continue;
+            }
+            std::string insertQuery =
+                    "replace into block" + std::to_string(cacheMap[cx][cz]) + " values ";
+            int i = 0;
+            for (i = 0; i < deltaList[cx][cz].size() - 1; i++) {
+                int x, y, z, t;
+                std::tie(x, y, z, t) = deltaList[cx][cz][i];
+                insertQuery.append("(" + std::to_string(cacheMap[cx][cz]) + "," +
+                                   std::to_string(x) + "," + std::to_string(y) + "," +
+                                   std::to_string(z) + "," + std::to_string(t) + ") ");
+                insertQuery += ",";
+            }
+            int x, y, z, t;
+            std::tie(x, y, z, t) = deltaList[cx][cz][i];
+            insertQuery.append("(" + std::to_string(cacheMap[cx][cz]) + "," +
+                               std::to_string(x) + "," + std::to_string(y) + "," +
+                               std::to_string(z) + "," + std::to_string(t) + ") ");
+            insertQuery += ";";
+//            std::clog << insertQuery << std::endl;
+            db->execSQL(insertQuery);
         }
     }
 }
