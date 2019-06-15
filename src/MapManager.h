@@ -7,6 +7,7 @@
 
 #include <array>
 #include <tuple>
+
 #include <glm/glm.hpp>
 #include <thread>
 
@@ -29,22 +30,22 @@ using Cache = Chunk[CHUNK_NUM][CHUNK_NUM];
 class MapManager {
 public:
     MapManager();
-    MapManager(glm::vec3 &pos);
+    MapManager(glm::vec3& pos);
     ~MapManager();
 
-    void updateCacheMap(glm::vec3 &pos);
+    void updateCacheMap(glm::vec3& pos);
     void genCacheFromNoise();
     Cache *getCache();
     std::pair<int32_t, int32_t> getCacheVertexCoord();
 
 private:
     // 缓存周围3x3个chunk的数据
-    Cache *cache;
+    Cache* cache;
     std::array<std::array<uint64_t, CHUNK_NUM>, CHUNK_NUM> cacheMap;
     std::vector<std::tuple<int, int, int, int> > deltaList[CHUNK_NUM][CHUNK_NUM];
     glm::vec3 p;
     Perlin n;
-    MCdb *db;
+    MCdb* db;
 
     void genCacheMap(glm::vec3 &pos);
     void loadDeltaBlock(int cx, int cz);

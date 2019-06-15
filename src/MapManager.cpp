@@ -12,7 +12,7 @@ MapManager::MapManager() {
     db->initDB("MineCraft");
 }
 
-MapManager::MapManager(glm::vec3 &pos) {
+MapManager::MapManager(glm::vec3& pos) {
     cache = new Cache[CHUNK_NUM];
     db = new MCdb(MCdb::Type::SQLITE);
     db->initDB("MineCraft");
@@ -26,7 +26,7 @@ MapManager::~MapManager() {
     delete db;
 }
 
-void MapManager::genCacheMap(glm::vec3 &pos) {
+void MapManager::genCacheMap(glm::vec3& pos) {
     cacheMap[0][0] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] - CHUNK_SIZE));
     cacheMap[0][1] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2]));
     cacheMap[0][2] = getID(int(pos[0] - CHUNK_SIZE), int(pos[2] + CHUNK_SIZE));
@@ -67,7 +67,7 @@ void MapManager::genCacheMap(glm::vec3 &pos) {
     //    cacheMap[4][4] = getID(int(pos[0] + 2 * CHUNK_SIZE), int(pos[2] + 2 * CHUNK_SIZE));
 }
 
-void MapManager::updateCacheMap(glm::vec3 &pos) {
+void MapManager::updateCacheMap(glm::vec3& pos) {
     // if pos and lastPos are in the same chunk, no need to update cache map
     if (getID(int(p[0]), int(p[2])) == getID(int(pos[0]), int(pos[2]))) {
         return;
@@ -135,8 +135,7 @@ void MapManager::genFlower(int cx, int cz) {
 
     for (int i = 0; i < CHUNK_SIZE; ++i) {
         for (int k = 0; k < CHUNK_SIZE; ++k) {
-            int h = (int) ((n.PerlinNoise((cx * CHUNK_SIZE + x + i) * 0.1,
-                                          (cz * CHUNK_SIZE + z + k) * 0.1) + 1) * 10);
+            int h = (int)((n.PerlinNoise((cx * CHUNK_SIZE + x + i) * 0.1, (cz * CHUNK_SIZE + z + k) * 0.1) + 1) * 10);
             int r = rand() % 1000 + 1;
             int t = CubeType::NONE;
             if (r % 7 == 0) {
@@ -263,8 +262,8 @@ std::pair<int32_t, int32_t> getChunkVertex(int32_t x, int32_t z) {
 }
 
 uint64_t getID(std::pair<int32_t, int32_t> p) {
-    uint64_t t = (uint64_t) p.first << 32;
-    t += (uint64_t) p.second;
+    uint64_t t = (uint64_t)p.first << 32;
+    t += (uint64_t)p.second;
     return t;
 }
 
