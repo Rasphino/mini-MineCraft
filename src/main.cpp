@@ -140,6 +140,8 @@ int main() {
             }
         }
 
+        glm::vec3 pos = camera.Position + camera.Front;
+        cube.Draw(CubeType::SOIL, pos, projection, view, camera.Position);
 
         glUseProgram(0);
         glfwSwapBuffers(window);
