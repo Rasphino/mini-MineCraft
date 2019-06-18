@@ -20,7 +20,7 @@ enum Camera_Movement {
     DOWN
 };
 
-enum direction {
+enum direction{
     front,
     back,
     goleft,
@@ -69,7 +69,7 @@ public:
             //glm::vec3 down = glm::vec3(0.0f, -1.0f, 0.0f),
            float yaw = YAW, float pitch = PITCH)
             : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED),
-              MouseSensitivity(SENSITIVITY), Zoom(ZOOM), fix(glm::vec3(0.2f, 0.0f, 0.2f)) {
+              MouseSensitivity(SENSITIVITY), Zoom(ZOOM), fix(glm::vec3(0.2f,0.0f,0.2f)) {
         Position = position;
         WorldUp = up;
         //WorldDown = down;
@@ -96,17 +96,16 @@ public:
     glm::mat4 GetViewMatrix() {
         return glm::lookAt(Position, Position + Front, Up);
     }
-
     float vel;
 
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-        float velocity = MovementSpeed * deltaTime;
+        float velocity = MovementSpeed * deltaTime   ;
         vel = velocity;
-        switch (direction) {
+        switch (direction){
             case TAB:
                 tab = -tab;  //tab = 1 -> fly
-//                std::cout << "tab: " << tab << std::endl;
+                std::cout << "tab: " << tab << std::endl;
                 break;
             case FORWARD:
                 Position += Front * velocity;
@@ -126,15 +125,15 @@ public:
                 tempy = Position.y;
                 break;
             case JUMP:
-                std::cout << "jumpcounter: " << jumpCounter << std::endl;
-                std::cout << stopJump << std::endl;
-                if (tab == -1 && !stopJump) {
+//                std::cout << "jumpcounter: " << jumpCounter << std::endl;
+//                std::cout << stopJump << std::endl;
+                if(tab == -1 && !stopJump){
                     jump = true;
-                } else if (tab == 1) {
+                }else if(tab == 1){
                     Position += WorldUp * velocity;
                     jump = false;
                     jumpCounter = 0;
-                } else {
+                }else{
                     jump = false;
                 }
                 break;
@@ -144,16 +143,16 @@ public:
     void ProcessFall() {
         bool fall = checkCollide(down);
         if (tab == -1 && !jump && !fall) { //fall
-            Position.y -= 1;
+            Position.y -= 0.5;
             stopJump = true;
         } else if (tab == -1 && !jump && fall) { //on ground
             Position.y = ground;
             stopJump = false;
-        } else if (tab == -1 && jump) { //jump
-//            std::cout << "in jump: " << jumpCounter << std::endl;
+        } else if (tab == -1 && jump ) { //jump
+            std::cout << "in jump: " << jumpCounter << std::endl;
             Position.y += 0.4 * sin(jumpCounter++ * glm::radians(40.0f));
-//            std::cout << Position.y << std::endl;
-            if (jumpCounter % 5 == 0) {
+            std::cout << Position.y << std::endl;
+            if(jumpCounter % 5 == 0){
                 jumpCounter = 0;
                 jump = false;
                 stopJump = true;
@@ -161,7 +160,8 @@ public:
         }
     }
 
-    bool checkCollide(direction dir) {
+    bool checkCollide(direction dir)
+    {
         glm::vec3 Next;
         /*glm::vec3 smallNext;*/
         MapManager nextMap(Position);
@@ -170,7 +170,7 @@ public:
         /*int sx, sz, scx, scz, sci, scj, sck;*/
         switch (dir) {
             case front:
-                Next = Position + Front * vel;
+                Next = Position + Front * vel ;
 //                smallNext = Position + Front * fixn;
 //                        - fix;
                 break;
@@ -210,8 +210,8 @@ public:
         sck = smallNext[2] - z - scz * CHUNK_SIZE;
         scj = (int) Position[1];*/
 
-        if (dir == up) cj++;
-        if (dir == down) cj--;
+        if(dir == up) cj++;
+        if(dir == down) cj--;
 
 //        std::cout << vel << std::endl;
 //        if(dir!=5) std::cout << dir <<  Position[0] << " " << Position[2] << " " << Next[0] << " " << Next[2] << std::endl;
@@ -221,9 +221,9 @@ public:
                  collide = true;
          }*/
 
-        if ((*mapCache)[cx][cz][ci][cj][ck] == CubeType::SOIL ||
-            (*mapCache)[cx][cz][ci][cj][ck] == CubeType::GRASS) {
-            if (dir == down) ground = cj + 2.4;
+        if((*mapCache)[cx][cz][ci][cj][ck] == CubeType::SOIL || (*mapCache)[cx][cz][ci][cj][ck] == CubeType::GRASS)
+        {
+            if(dir == down) ground = cj + 2.4;
             collide = true;
         }
         return collide;

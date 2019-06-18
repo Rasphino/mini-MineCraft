@@ -9,9 +9,10 @@ using namespace std;
 #define SCR_WIDTH = 800;
 #define SCR_HEIGHT = 600;
 
-
+extern float ColorCoefficient;
 typedef struct _VertexData {
     float position[3];
+    float normal[3];
     float texture[2];
 } VertexData;
 
@@ -22,256 +23,364 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     VertexData grassCube[] = {
             //后面
             {{0.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {0,    size}},
             {{1.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {size, size}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {size, 2 * size}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {size, 2 * size}},
             {{0.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {0,    2 * size}},
             {{0.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {0,    size}},
 
             //前面
             {{0.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {0,    size}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {size, 2 * size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {size, 2 * size}},
             {{0.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {0,    2 * size}},
             {{0.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {0,    size}},
 
             //左面
             {{0.0f, 0.0f, 0.0f},
+                    {-1, 0, 0},
                     {0,    size}},
             {{0.0f, 0.0f, 1.0f},
+                    {-1, 0, 0},
                     {size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {-1, 0, 0},
                     {size, 2 * size}},
             {{0.0f, 1.0f, 1.0f},
+                    {-1, 0, 0},
                     {size, 2 * size}},
             {{0.0f, 1.0f, 0.0f},
+                    {-1, 0, 0},
                     {0,    2 * size}},
             {{0.0f, 0.0f, 0.0f},
+                    {-1, 0, 0},
                     {0,    size}},
 
             //右面
             {{1.0f, 0.0f, 0.0f},
+                    {1, 0, 0},
                     {0,    size}},
             {{1.0f, 0.0f, 1.0f},
+                    {1, 0, 0},
                     {size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {1, 0, 0},
                     {size, 2 * size}},
             {{1.0f, 1.0f, 1.0f},
+                    {1, 0, 0},
                     {size, 2 * size}},
             {{1.0f, 1.0f, 0.0f},
+                    {1, 0, 0},
                     {0,    2 * size}},
             {{1.0f, 0.0f, 0.0f},
+                    {1, 0, 0},
                     {0,    size}},
 
             //下面
             {{0.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {0,    0}},
             {{1.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {size, 0}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {size, size}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {size, size}},
             {{0.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {0,    size}},
             {{0.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {0,    0}},
 
             //上面
 
             {{0.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {0,    2 * size}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {size, 2 * size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {size, 3 * size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {size, 3 * size}},
             {{0.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {0,    3 * size}},
             {{0.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {0,    2 * size}},
     };
 
     VertexData soilCube[] = {
             //后面
             {{0.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {0,    0}},
             {{1.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {size, 0}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {size, size}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {size, size}},
             {{0.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {0,    size}},
             {{0.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {0,    0}},
 
             //前面
             {{0.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {0,    0}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {size, 0}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {0,    size}},
             {{0.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {0,    0}},
             //左面
             {{0.0f, 0.0f, 0.0f},
+                    {-1, 0, 0},
                     {0,    0}},
             {{0.0f, 0.0f, 1.0f},
+                    {-1, 0, 0},
                     {size, 0}},
             {{0.0f, 1.0f, 1.0f},
+                    {-1, 0, 0},
                     {size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {-1, 0, 0},
                     {size, size}},
             {{0.0f, 1.0f, 0.0f},
+                    {-1, 0, 0},
                     {0,    size}},
             {{0.0f, 0.0f, 0.0f},
+                    {-1, 0, 0},
                     {0,    0}},
             //右面
             {{1.0f, 0.0f, 0.0f},
+                    {1, 0, 0},
                     {0,    0}},
             {{1.0f, 0.0f, 1.0f},
+                    {1, 0, 0},
                     {size, 0}},
             {{1.0f, 1.0f, 1.0f},
+                    {1, 0, 0},
                     {size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {1, 0, 0},
                     {size, size}},
             {{1.0f, 1.0f, 0.0f},
+                    {1, 0, 0},
                     {0,    size}},
             {{1.0f, 0.0f, 0.0f},
+                    {1, 0, 0},
                     {0,    0}},
             //下面
             {{0.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {0,    0}},
             {{1.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {size, 0}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {size, size}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {size, size}},
             {{0.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {0,    size}},
             {{0.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {0,    0}},
 
             //上面
 
             {{0.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {0,    0}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {size, 0}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {0,    size}},
             {{0.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {0,    0}},
     };
     VertexData rockCube[] = {
             //后面
             {{0.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {5 * size, 0}},
             {{1.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {6 * size, 0}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {6 * size, size}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {6 * size, size}},
             {{0.0f, 1.0f, 0.0f},
+                    {0, 0, -1},
                     {5 * size, size}},
             {{0.0f, 0.0f, 0.0f},
+                    {0, 0, -1},
                     {5 * size, 0}},
 
             //前面
             {{0.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {5 * size, 0}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {6 * size, 0}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {6 * size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {6 * size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {0, 0, 1},
                     {5 * size, size}},
             {{0.0f, 0.0f, 1.0f},
+                    {0, 0, 1},
                     {5 * size, 0}},
 
             //左面
             {{0.0f, 0.0f, 0.0f},
+                    {-1, 0, 0},
                     {5 * size, 0}},
             {{0.0f, 0.0f, 1.0f},
+                    {-1, 0, 0},
                     {6 * size, 0}},
             {{0.0f, 1.0f, 1.0f},
+                    {-1, 0, 0},
                     {6 * size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {-1, 0, 0},
                     {6 * size, size}},
             {{0.0f, 1.0f, 0.0f},
+                    {-1, 0, 0},
                     {5 * size, size}},
             {{0.0f, 0.0f, 0.0f},
+                    {-1, 0, 0},
                     {5 * size, 0}},
 
             //右面
             {{1.0f, 0.0f, 0.0f},
+                    {1, 0, 0},
                     {5 * size, 0}},
             {{1.0f, 0.0f, 1.0f},
+                    {1, 0, 0},
                     {6 * size, 0}},
             {{1.0f, 1.0f, 1.0f},
+                    {1, 0, 0},
                     {6 * size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {1, 0, 0},
                     {6 * size, size}},
             {{1.0f, 1.0f, 0.0f},
+                    {1, 0, 0},
                     {5 * size, size}},
             {{1.0f, 0.0f, 0.0f},
+                    {1, 0, 0},
                     {5 * size, 0}},
 
             //下面
             {{0.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {5 * size, 0}},
             {{1.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {6 * size, 0}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {6 * size, size}},
             {{1.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {6 * size, size}},
             {{0.0f, 0.0f, 1.0f},
+                    {0, -1, 0},
                     {5 * size, size}},
             {{0.0f, 0.0f, 0.0f},
+                    {0, -1, 0},
                     {5 * size, 0}},
 
             //上面
             {{0.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {5 * size, 0}},
             {{1.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {6 * size, 0}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {6 * size, size}},
             {{1.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {6 * size, size}},
             {{0.0f, 1.0f, 1.0f},
+                    {0, 1, 0},
                     {5 * size, size}},
             {{0.0f, 1.0f, 0.0f},
+                    {0, 1, 0},
                     {5 * size, 0}},
     };
     VertexData highGrassCube[] = {
@@ -760,17 +869,25 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glBindBuffer(GL_ARRAY_BUFFER, VBO_grass);
     glBufferData(GL_ARRAY_BUFFER, sizeof(grassCube), grassCube, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                          (void *) (sizeof(grassCube[0].position)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) (3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
+                          (void *) (6 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     glGenVertexArrays(1, &VAO_soil);
     glGenBuffers(1, &VBO_soil);
     glBindVertexArray(VAO_soil);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_soil);
     glBufferData(GL_ARRAY_BUFFER, sizeof(soilCube), soilCube, GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
-                          (void *) (sizeof(soilCube[0].position)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) (3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
+                          (void *) (6 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     glGenVertexArrays(1, &VAO_highGrass);
     glGenBuffers(1, &VBO_highGrass);
@@ -781,6 +898,9 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(highGrassCube[0].position)));
 
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
+
     glGenVertexArrays(1, &VAO_flower_1);
     glGenBuffers(1, &VBO_flower_1);
     glBindVertexArray(VAO_flower_1);
@@ -790,6 +910,9 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(flower_1Cube[0].position)));
 
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
+
     glGenVertexArrays(1, &VAO_flower_2);
     glGenBuffers(1, &VBO_flower_2);
     glBindVertexArray(VAO_flower_2);
@@ -798,6 +921,8 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(flower_2Cube[0].position)));
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
 
     glGenVertexArrays(1, &VAO_flower_3);
     glGenBuffers(1, &VBO_flower_3);
@@ -807,6 +932,8 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(flower_3Cube[0].position)));
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
 
     glGenVertexArrays(1, &VAO_flower_4);
     glGenBuffers(1, &VBO_flower_4);
@@ -816,6 +943,8 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(flower_4Cube[0].position)));
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
 
     glGenVertexArrays(1, &VAO_flower_5);
     glGenBuffers(1, &VBO_flower_5);
@@ -825,6 +954,8 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(flower_5Cube[0].position)));
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
 
     glGenVertexArrays(1, &VAO_flower_6);
     glGenBuffers(1, &VBO_flower_6);
@@ -834,6 +965,8 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void *) 0);
     glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData),
                           (void *) (sizeof(flower_6Cube[0].position)));
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
 
 }
 
@@ -841,10 +974,6 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
                 glm::vec3 cameraPos) {
 
     if (name == CubeType::SOIL) {
-        glBindVertexArray(VAO_soil);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_soil);
-        glEnableVertexAttribArray(2);
-        glEnableVertexAttribArray(3);
         soilShader.use();
         soilShader.setMat4("projection", projection);
         soilShader.setMat4("view", view);
@@ -855,12 +984,19 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         soilShader.setMat4("model", model);
         soilShader.setVec3("cubePos", pos);
         soilShader.setVec3("cameraPos", cameraPos);
+
+        soilShader.setVec3("light.direction", -cameraPos);
+
+        // light properties
+        soilShader.setVec3("light.ambient", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+        soilShader.setVec3("light.diffuse", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+        soilShader.setVec3("light.specular", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+
+        // material properties
+        soilShader.setFloat("material.shininess", 32.0f);
+        glBindVertexArray(VAO_soil);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::GRASS) {
-        glBindVertexArray(VAO_grass);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_grass);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
         grassShader.use();
         grassShader.setMat4("projection", projection);
         grassShader.setMat4("view", view);
@@ -871,12 +1007,19 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         grassShader.setMat4("model", model);
         grassShader.setVec3("cubePos", pos);
         grassShader.setVec3("cameraPos", cameraPos);
+
+        grassShader.setVec3("light.direction", -cameraPos);;
+
+        // light properties
+        grassShader.setVec3("light.ambient", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+        grassShader.setVec3("light.diffuse", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+        grassShader.setVec3("light.specular",ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+
+        // material properties
+        grassShader.setFloat("material.shininess", 32.0f);
+        glBindVertexArray(VAO_grass);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::HIGHGRASS) {
-        glBindVertexArray(VAO_highGrass);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_highGrass);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -889,12 +1032,9 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_highGrass);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::FLOWER_1) {
-        glBindVertexArray(VAO_flower_1);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_flower_1);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -905,12 +1045,9 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_flower_1);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::FLOWER_2) {
-        glBindVertexArray(VAO_flower_2);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_flower_2);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -921,12 +1058,9 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_flower_2);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::FLOWER_3) {
-        glBindVertexArray(VAO_flower_3);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_flower_3);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -937,12 +1071,9 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_flower_3);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::FLOWER_4) {
-        glBindVertexArray(VAO_flower_4);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_flower_4);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -953,12 +1084,9 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_flower_4);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::FLOWER_5) {
-        glBindVertexArray(VAO_flower_5);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_flower_5);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -969,12 +1097,9 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_flower_5);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     } else if (name == CubeType::FLOWER_6) {
-        glBindVertexArray(VAO_flower_6);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_flower_6);
-        glEnableVertexAttribArray(4);
-        glEnableVertexAttribArray(5);
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -985,6 +1110,7 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         transparentShader.setVec3("cubePos", pos);
         transparentShader.setVec3("cameraPos", cameraPos);
         transparentShader.setMat4("model", model);
+        glBindVertexArray(VAO_flower_6);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 

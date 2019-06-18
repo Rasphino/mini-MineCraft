@@ -23,7 +23,7 @@ public:
         SQLITE
     };
     Type type;
-    explicit MCdb(Type t = Type::SQLITE);
+    explicit MCdb(Type t);
     ~MCdb();
     bool initDB(std::string db_name, std::string host = "localhost", std::string user = "",
                 std::string passwd = "");
