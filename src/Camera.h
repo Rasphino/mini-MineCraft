@@ -20,7 +20,7 @@ enum Camera_Movement {
     DOWN
 };
 
-enum direction{
+enum direction {
     front,
     back,
     goleft,
@@ -58,10 +58,11 @@ public:
     bool jump = false, crouch = false, stopJump = false;
     int jumpCounter = 0;
     int tab = 1;
-    float tempy;
+//    float tempy;
     float ground;
     bool stopMove = false;
-    float fixn = 0.05;
+    float distance = 6;
+//    float shorten = 0.5f;
 
     // Constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
@@ -69,13 +70,13 @@ public:
             //glm::vec3 down = glm::vec3(0.0f, -1.0f, 0.0f),
            float yaw = YAW, float pitch = PITCH)
             : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED),
-              MouseSensitivity(SENSITIVITY), Zoom(ZOOM), fix(glm::vec3(0.2f,0.0f,0.2f)) {
+              MouseSensitivity(SENSITIVITY), Zoom(ZOOM), fix(glm::vec3(0.2f, 0.0f, 0.2f)) {
         Position = position;
         WorldUp = up;
         //WorldDown = down;
         Yaw = yaw;
         Pitch = pitch;
-        tempy = Position.y;
+//        tempy = Position.y;
         updateCameraVectors();
     }
     /*
@@ -96,20 +97,20 @@ public:
     glm::mat4 GetViewMatrix() {
         return glm::lookAt(Position, Position + Front, Up);
     }
+
     float vel;
 
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-        float velocity = MovementSpeed * deltaTime   ;
+        float velocity = MovementSpeed * deltaTime;
         vel = velocity;
-        switch (direction){
+        switch (direction) {
             case TAB:
                 tab = -tab;  //tab = 1 -> fly
                 std::cout << "tab: " << tab << std::endl;
                 break;
             case FORWARD:
                 Position += Front * velocity;
-                //std::cout << "Front : " << Front.x << " " << Front.y << " " << Front.z << std::endl;
                 break;
             case BACKWARD:
                 Position -= Front * velocity;
@@ -122,18 +123,18 @@ public:
                 break;
             case DOWN :
                 Position -= WorldUp * velocity;
-                tempy = Position.y;
+//                tempy = Position.y;
                 break;
             case JUMP:
 //                std::cout << "jumpcounter: " << jumpCounter << std::endl;
 //                std::cout << stopJump << std::endl;
-                if(tab == -1 && !stopJump){
+                if (tab == -1 && !stopJump) {
                     jump = true;
-                }else if(tab == 1){
+                } else if (tab == 1) {
                     Position += WorldUp * velocity;
                     jump = false;
                     jumpCounter = 0;
-                }else{
+                } else {
                     jump = false;
                 }
                 break;
@@ -148,11 +149,11 @@ public:
         } else if (tab == -1 && !jump && fall) { //on ground
             Position.y = ground;
             stopJump = false;
-        } else if (tab == -1 && jump ) { //jump
-            std::cout << "in jump: " << jumpCounter << std::endl;
+        } else if (tab == -1 && jump) { //jump
+//            std::cout << "in jump: " << jumpCounter << std::endl;
             Position.y += 0.4 * sin(jumpCounter++ * glm::radians(40.0f));
-            std::cout << Position.y << std::endl;
-            if(jumpCounter % 5 == 0){
+//            std::cout << Position.y << std::endl;
+            if (jumpCounter % 5 == 0) {
                 jumpCounter = 0;
                 jump = false;
                 stopJump = true;
@@ -160,34 +161,23 @@ public:
         }
     }
 
-    bool checkCollide(direction dir)
-    {
+    bool checkCollide(direction dir) {
         glm::vec3 Next;
-        /*glm::vec3 smallNext;*/
         MapManager nextMap(Position);
         bool collide = false;
         int x, z, cx, cz, ci, cj, ck;
-        /*int sx, sz, scx, scz, sci, scj, sck;*/
         switch (dir) {
             case front:
-                Next = Position + Front * vel ;
-//                smallNext = Position + Front * fixn;
-//                        - fix;
+                Next = Position + Front * vel;
                 break;
             case back:
                 Next = Position - Front * vel;
-//                smallNext = Position - Front * fixn;
-                //+ fix;
                 break;
             case goleft:
                 Next = Position - Right * vel;
-//                smallNext = Position - Right * fixn;
-                //- fix ;
                 break;
             case goright:
                 Next = Position + Right * vel;
-//                smallNext = Position + Right * fixn;
-                //+ fix;
                 break;
             case up:
                 Next = Position + WorldUp;
@@ -195,6 +185,7 @@ public:
             case down:
                 Next = Position;
         }
+
         nextMap.updateCacheMap(Next);
         Cache *mapCache = nextMap.getCache();
         std::tie(x, z) = nextMap.getCacheVertexCoord();
@@ -203,30 +194,98 @@ public:
         ci = Next[0] - x - cx * CHUNK_SIZE;
         ck = Next[2] - z - cz * CHUNK_SIZE;
         cj = (int) Position[1] - 1;
-        /*
-        scx = (smallNext[0] - x) / CHUNK_SIZE;
-        scz = (smallNext[2] - z) / CHUNK_SIZE;
-        sci = smallNext[0] - x - scx * CHUNK_SIZE;
-        sck = smallNext[2] - z - scz * CHUNK_SIZE;
-        scj = (int) Position[1];*/
+        if (dir == up) cj++;
+        if (dir == down) cj--;
 
-        if(dir == up) cj++;
-        if(dir == down) cj--;
-
-//        std::cout << vel << std::endl;
-//        if(dir!=5) std::cout << dir <<  Position[0] << " " << Position[2] << " " << Next[0] << " " << Next[2] << std::endl;
-        /*
-         if(dir != up && dir != down){
-             if((*mapCache)[scx][scz][sci][scj][sck] == CubeType::SOIL || (*mapCache)[scx][scz][sci][scj][sck] == CubeType::GRASS)
-                 collide = true;
-         }*/
-
-        if((*mapCache)[cx][cz][ci][cj][ck] == CubeType::SOIL || (*mapCache)[cx][cz][ci][cj][ck] == CubeType::GRASS)
-        {
-            if(dir == down) ground = cj + 2.4;
+        if ((*mapCache)[cx][cz][ci][cj][ck] == CubeType::SOIL ||
+            (*mapCache)[cx][cz][ci][cj][ck] == CubeType::GRASS) {
+            if (dir == down) ground = cj + 2.4;
             collide = true;
         }
         return collide;
+    }
+
+    void remove() {
+        glm::vec3 available;
+        MapManager avaMap(Position);
+        float cnt = 1;
+        int x, z, cx, cz, ci, cj, ck;
+        while (cnt < distance) {
+//            std::cout << cnt << std::endl;
+            available = Position + Front * cnt;
+            avaMap.updateCacheMap(available);
+//            std::cout << std::endl;
+            Cache *mapCache = avaMap.getCache();
+            std::tie(x, z) = avaMap.getCacheVertexCoord();
+            cx = (available[0] - x) / CHUNK_SIZE;
+            cz = (available[2] - z) / CHUNK_SIZE;
+            ci = available[0] - x - cx * CHUNK_SIZE;
+            ck = available[2] - z - cz * CHUNK_SIZE;
+            cj = (int) available[1];
+//            std::cout << cj << " " << Position[1] << std::endl;
+            if ((*mapCache)[cx][cz][ci][cj][ck] != CubeType::NONE) {
+                std::cout << "remove" << std::endl;
+//                (*mapCache)[cx][cz][ci][cj][ck] = CubeType::NONE;
+//                std::cout << cx << " " << cz << std::endl;
+                avaMap.deltaList[cx][cz].emplace_back(ci, cj, ck, CubeType::NONE);
+                avaMap.update(available);
+//                avaMap.updateCacheMap(available);
+//                (*mapCache)[cx][cz][ci][cj][ck] = CubeType::NONE;
+//                (*cache)[cx][cz][x][y][z] = t;
+                break;
+            }
+            cnt += 0.8;
+        }
+    }
+
+    void add() {
+        glm::vec3 available;
+        glm::vec3 nextAva;
+//        MapManager avaMap(Position);
+        nextAva = Position + Front * distance;
+        MapManager avaMap(nextAva);
+        float cnt = distance - 0.5;
+        int x, z, cx, cz, ci, cj, ck;
+        int nx, nz, ncx, ncz, nci, ncj, nck;
+        Cache *nextcache = avaMap.getCache();
+        std::tie(nx, nz) = avaMap.getCacheVertexCoord();
+        ncx = (nextAva[0] - nx) / CHUNK_SIZE;
+        ncz = (nextAva[2] - nz) / CHUNK_SIZE;
+        nci = nextAva[0] - nx - ncx * CHUNK_SIZE;
+        nck = nextAva[2] - nz - ncz * CHUNK_SIZE;
+        ncj = (int) nextAva[1];
+        while (cnt > 0) {
+//            std::cout << cnt << std::endl;
+            available = Position + Front * cnt;
+            avaMap.updateCacheMap(available);
+            Cache *mapCache = avaMap.getCache();
+            std::tie(x, z) = avaMap.getCacheVertexCoord();
+            cx = (available[0] - x) / CHUNK_SIZE;
+            cz = (available[2] - z) / CHUNK_SIZE;
+            ci = available[0] - x - cx * CHUNK_SIZE;
+            ck = available[2] - z - cz * CHUNK_SIZE;
+            cj = (int) available[1];
+//            std::cout << cj << " " << Position[1] << std::endl;
+            if ((*mapCache)[cx][cz][ci][cj][ck] == CubeType::NONE
+                && (*nextcache)[ncx][ncz][nci][ncj][nck] != CubeType::NONE) {
+                std::cout << "add" << std::endl;
+                avaMap.deltaList[cx][cz].emplace_back(ci, cj, ck, CubeType::GRASS);
+                avaMap.update(available);
+//                bool up = checkCollide(down);
+//                if(up) Position.y += 1;
+                break;
+            }
+            nextAva = available;
+            nextcache = mapCache;
+            ncx = cx;
+            ncz = cz;
+            nci = ci;
+            ncj = cj;
+            nck = ck;
+            nx = x;
+            nz = z;
+            cnt -= 0.8;
+        }
     }
 
 
