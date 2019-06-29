@@ -8,8 +8,8 @@ using namespace std;
 // settings
 #define SCR_WIDTH = 800;
 #define SCR_HEIGHT = 600;
-
 extern float ColorCoefficient;
+
 typedef struct _VertexData {
     float position[3];
     float normal[3];
@@ -21,7 +21,6 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
                transparentShader("shaders/transparent.vs", "shaders/transparent.fs") {
     const float size = 1 / 16.0;
     VertexData grassCube[] = {
-            //后面
             {{0.0f, 0.0f, 0.0f},
                     {0, 0, -1},
                     {0,    size}},
@@ -394,15 +393,15 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
                     {size, 3 * size}
             },
             {
-                    {1.0f, 1.0f, 0.0f},
+                    {1.0f, 1.5f, 0.0f},
                     {size, 4 * size}
             },
             {
-                    {1.0f, 1.0f, 0.0f},
+                    {1.0f, 1.5f, 0.0f},
                     {size, 4 * size}
             },
             {
-                    {0.0f, 1.0f, 1.0f},
+                    {0.0f, 1.5f, 1.0f},
                     {0,    4 * size}
             },
             {
@@ -420,15 +419,15 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
                     {size, 3 * size}
             },
             {
-                    {1.0f, 1.0f, 1.0f},
+                    {1.0f, 1.5f, 1.0f},
                     {size, 4 * size}
             },
             {
-                    {1.0f, 1.0f, 1.0f},
+                    {1.0f, 1.5f, 1.0f},
                     {size, 4 * size}
             },
             {
-                    {0.0f, 1.0f, 0.0f},
+                    {0.0f, 1.5f, 0.0f},
                     {0,    4 * size}
             },
             {
@@ -437,6 +436,240 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
             },
 
     };
+    VertexData flower_1Cube[] = {
+            //后面
+            {{-0.35f, 0.0f, 0.35f},
+                    {	size,	3 *	size}},
+            {{ 0.35f, 0.0f, -0.35f},
+                    {2 * size,	3 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {2 * size,	4 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {2 * size,	4 * size}},
+            {{-0.35f, 1.0f, 0.35f},
+                    {	size,	4 * size}},
+            {{-0.35f, 0.0f, 0.35f},
+                    {	size,	3 * size}},
+
+            //前面
+            {{-0.5f, 0.0f, -0.5f},
+                    {	size,	3 * size}},
+            {{ 0.5f, 0.0f, 0.5f},
+                    {2 * size,	3 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {2 * size,	4 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {2 * size,	4 * size}},
+            {{-0.5f, 1.0f, -0.5f},
+                    {	size,	4 * size}},
+            {{-0.5f, 0.0f, -0.5f},
+                    {	size,	3 * size}},
+
+    };
+    VertexData flower_2Cube[] = {
+            //后面
+            {{-0.35f, 0.0f, 0.35f},
+                    {2 * size,	3 *	size}},
+            {{ 0.35f, 0.0f, -0.35f},
+                    {3 * size,	3 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {3 * size,	4 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {3 * size,	4 * size}},
+            {{-0.35f, 1.0f, 0.35f},
+                    {2 * size,	4 * size}},
+            {{-0.35f, 0.0f, 0.35f},
+                    {2 * size,	3 * size}},
+
+            //前面
+            {{-0.5f, 0.0f, -0.5f},
+                    {2 * size,	3 * size}},
+            {{ 0.5f, 0.0f, 0.5f},
+                    {3 * size,	3 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {3 * size,	4 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {3 * size,	4 * size}},
+            {{-0.5f, 1.0f, -0.5f},
+                    {2 * size,	4 * size}},
+            {{-0.5f, 0.0f, -0.5f},
+                    {2 * size,	3 * size}},
+
+    };
+    VertexData flower_3Cube[] = {
+            //后面
+            {{-0.35f, 0.0f, 0.35f},
+                    {3 * size,	3 *	size}},
+            {{ 0.35f, 0.0f, -0.35f},
+                    {4 * size,	3 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {4 * size,	4 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {4 * size,	4 * size}},
+            {{-0.35f, 1.0f, 0.35f},
+                    {3 * size,	4 * size}},
+            {{-0.35f, 0.0f, 0.35f},
+                    {3 * size,	3 * size}},
+
+            //前面
+            {{-0.5f, 0.0f, -0.5f},
+                    {3 * size,	3 * size}},
+            {{ 0.5f, 0.0f, 0.5f},
+                    {4 * size,	3 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {4 * size,	4 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {4 * size,	4 * size}},
+            {{-0.5f, 1.0f, -0.5f},
+                    {3 * size,	4 * size}},
+            {{-0.5f, 0.0f, -0.5f},
+                    {3 * size,	3 * size}},
+
+    };
+    VertexData flower_4Cube[] = {
+            //后面
+            {{-0.35f, 0.0f, 0.35f},
+                    {4 * size,	3 *	size}},
+            {{ 0.35f, 0.0f, -0.35f},
+                    {5 * size,	3 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {5 * size,	4 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {5 * size,	4 * size}},
+            {{-0.35f, 1.0f, 0.35f},
+                    {4 * size,	4 * size}},
+            {{-0.35f, 0.0f, 0.35f},
+                    {4 * size,	3 * size}},
+
+            //前面
+            {{-0.5f, 0.0f, -0.5f},
+                    {4 * size,	3 * size}},
+            {{ 0.5f, 0.0f, 0.5f},
+                    {5 * size,	3 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {5 * size,	4 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {5 * size,	4 * size}},
+            {{-0.5f, 1.0f, -0.5f},
+                    {4 * size,	4 * size}},
+            {{-0.5f, 0.0f, -0.5f},
+                    {4 * size,	3 * size}},
+
+    };
+    VertexData flower_5Cube[] = {
+            {{ 0.35f, 0.0f, 0.35f},
+                    {5 * size,	3 *	size}},
+            {{-0.35f, 0.0f, -0.35f},
+                    {6 * size,	3 * size}},
+            {{-0.35f, 1.0f, -0.35f},
+                    {6 * size,	4 * size}},
+            {{-0.35f, 1.0f, -0.35f},
+                    {6 * size,	4 * size}},
+            {{ 0.35f, 1.0f, 0.35f},
+                    {5 * size,	4 * size}},
+            {{ 0.35f, 0.0f, 0.35f},
+                    {5 * size,	3 * size}},
+
+            //前面
+            {{ 0.5f, 0.0f, -0.5f},
+                    {5 * size,	3 * size}},
+            {{-0.5f, 0.0f, 0.5f},
+                    {6 * size,	3 * size}},
+            {{-0.5f, 1.0f, 0.5f},
+                    {6 * size,	4 * size}},
+            {{-0.5f, 1.0f, 0.5f},
+                    {6 * size,	4 * size}},
+            {{ 0.5f, 1.0f, -0.5f},
+                    {5 * size,	4 * size}},
+            {{ 0.5f, 0.0f, -0.5f},
+                    {5 * size,	3 * size}},
+
+            {{-0.35f, 0.0f, 0.35f},
+                    {5 * size,	3 *	size}},
+            {{ 0.35f, 0.0f, -0.35f},
+                    {6 * size,	3 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {6 * size,	4 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {6 * size,	4 * size}},
+            {{-0.35f, 1.0f, 0.35f},
+                    {5 * size,	4 * size}},
+            {{-0.35f, 0.0f, 0.35f},
+                    {5 * size,	3 * size}},
+
+            //前面
+            {{-0.5f, 0.0f, -0.5f},
+                    {5 * size,	3 * size}},
+            {{ 0.5f, 0.0f, 0.5f},
+                    {6 * size,	3 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {6 * size,	4 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {6 * size,	4 * size}},
+            {{-0.5f, 1.0f, -0.5f},
+                    {5 * size,	4 * size}},
+            {{-0.5f, 0.0f, -0.5f},
+                    {5 * size,	3 * size}},
+
+    };
+    VertexData flower_6Cube[] = {
+
+            {{ 0.35f, 0.0f, 0.35f},
+                    {6 * size,	3 *	size}},
+            {{-0.35f, 0.0f, -0.35f},
+                    {7 * size,	3 * size}},
+            {{-0.35f, 1.0f, -0.35f},
+                    {7 * size,	4 * size}},
+            {{-0.35f, 1.0f, -0.35f},
+                    {7 * size,	4 * size}},
+            {{ 0.35f, 1.0f, 0.35f},
+                    {6 * size,	4 * size}},
+            {{ 0.35f, 0.0f, 0.35f},
+                    {6 * size,	3 * size}},
+
+            //前面
+            {{ 0.5f, 0.0f, -0.5f},
+                    {6 * size,	3 * size}},
+            {{-0.5f, 0.0f, 0.5f},
+                    {7 * size,	3 * size}},
+            {{-0.5f, 1.0f, 0.5f},
+                    {7 * size,	4 * size}},
+            {{-0.5f, 1.0f, 0.5f},
+                    {7 * size,	4 * size}},
+            {{ 0.5f, 1.0f, -0.5f},
+                    {6 * size,	4 * size}},
+            {{ 0.5f, 0.0f, -0.5f},
+                    {6 * size,	3 * size}},
+
+            {{-0.35f, 0.0f, 0.35f},
+                    {6 * size,	3 *	size}},
+            {{ 0.35f, 0.0f, -0.35f},
+                    {7 * size,	3 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {7 * size,	4 * size}},
+            {{ 0.35f, 1.0f, -0.35f},
+                    {7 * size,	4 * size}},
+            {{-0.35f, 1.0f, 0.35f},
+                    {6 * size,	4 * size}},
+            {{-0.35f, 0.0f, 0.35f},
+                    {6 * size,	3 * size}},
+
+            //前面
+            {{-0.5f, 0.0f, -0.5f},
+                    {6 * size,	3 * size}},
+            {{ 0.5f, 0.0f, 0.5f},
+                    {7 * size,	3 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {7 * size,	4 * size}},
+            {{ 0.5f, 1.0f, 0.5f},
+                    {7 * size,	4 * size}},
+            {{-0.5f, 1.0f, -0.5f},
+                    {6 * size,	4 * size}},
+            {{-0.5f, 0.0f, -0.5f},
+                    {6 * size,	3 * size}},
+
+    };
+    /*
     VertexData flower_1Cube[] = {
             //后面
             {
@@ -862,7 +1095,7 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
             },
 
     };
-
+    */
     glGenVertexArrays(1, &VAO_grass);
     glGenBuffers(1, &VBO_grass);
     glBindVertexArray(VAO_grass);
@@ -972,7 +1205,6 @@ Cube::Cube() : grassShader("shaders/grass.vs", "shaders/grass.fs"),
 
 void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 view,
                 glm::vec3 cameraPos) {
-
     if (name == CubeType::SOIL) {
         soilShader.use();
         soilShader.setMat4("projection", projection);
@@ -1019,7 +1251,7 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
         grassShader.setFloat("material.shininess", 32.0f);
         glBindVertexArray(VAO_grass);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-    } else if (name == CubeType::HIGHGRASS) {
+    }else if (name == CubeType::HIGHGRASS) {
         transparentShader.use();
         transparentShader.setMat4("projection", projection);
         transparentShader.setMat4("view", view);
@@ -1115,7 +1347,94 @@ void Cube::Draw(CubeType name, glm::vec3 pos, glm::mat4 projection, glm::mat4 vi
     }
 
 }
-
+//void Cube::DrawCluster(glm::mat4 projection, glm::vec3 pos, glm::mat4 view,
+//                       glm::vec3 cameraPos, glm::mat4 grassCubeModel[], glm::vec3 grassCubePos[], int grassCubeCount,
+//                       glm::mat4 soilCubeModel[], glm::vec3 soilCubePos[], int soilCubeCount) {
+//
+//    int cubesPerRender = 100;
+//    int grassRenderTimes = grassCubeCount / cubesPerRender;
+//    int remainder = grassCubeCount % cubesPerRender;
+//    grassShader.use();
+//    grassShader.setMat4("projection", projection);
+//    grassShader.setMat4("view", view);
+//    glUniform1i(glGetUniformLocation(grassShader.ID, "soil"), 0);
+//    grassShader.setVec3("cubePos", pos);
+//    grassShader.setVec3("cameraPos", cameraPos);
+//    grassShader.setVec3("light.direction", -cameraPos);
+//
+//    // light properties
+//    grassShader.setVec3("light.ambient", ColorCoefficient * 1.5f, ColorCoefficient * 1.5f, ColorCoefficient *1.5f);
+//    grassShader.setVec3("light.diffuse", ColorCoefficient * 1.5f, ColorCoefficient * 1.5f, ColorCoefficient * 1.5f);
+//    grassShader.setVec3("light.specular", ColorCoefficient * 1.5f, ColorCoefficient * 1.5f, ColorCoefficient * 1.5f);
+//
+//    // material properties
+//    grassShader.setFloat("material.shininess", 32.0f);
+//
+//    for (int s = 0; s < grassRenderTimes; s++) {
+//        for (unsigned int i = 0; i < cubesPerRender; i++) {
+//            stringstream ss;
+//            string index;
+//            ss << i;
+//            index = ss.str();
+//            grassShader.setMat4(("model[" + index + "]").c_str(), grassCubeModel[s * cubesPerRender + i]);
+//            grassShader.setVec3(("cubePos[" + index + "]").c_str(), grassCubePos[s * cubesPerRender + i]);
+//            glBindVertexArray(VAO_grass);
+//            glDrawArraysInstanced(GL_TRIANGLES, 0, 36, cubesPerRender);
+//        }
+//    }
+//    for (unsigned int i = 0; i < remainder; i++) {
+//        stringstream ss;
+//        string index;
+//        ss << i;
+//        index = ss.str();
+//        grassShader.setMat4(("model[" + index + "]").c_str(), grassCubeModel[grassRenderTimes * cubesPerRender + i]);
+//        grassShader.setVec3(("cubePos[" + index + "]").c_str(), grassCubePos[grassRenderTimes * cubesPerRender + i]);
+//        glBindVertexArray(VAO_grass);
+//        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, remainder);
+//    }
+//
+//    int soilRenderTimes = soilCubeCount / cubesPerRender;
+//    remainder = soilCubeCount % cubesPerRender;
+//    soilShader.use();
+//    soilShader.setMat4("projection", projection);
+//    soilShader.setMat4("view", view);
+//    glUniform1i(glGetUniformLocation(soilShader.ID, "soil"), 0);
+//    soilShader.setVec3("cubePos", pos);
+//    soilShader.setVec3("cameraPos", cameraPos);
+//    soilShader.setVec3("light.direction", -cameraPos);
+//
+//    // light properties
+//    soilShader.setVec3("light.ambient", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+//    soilShader.setVec3("light.diffuse", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+//    soilShader.setVec3("light.specular", ColorCoefficient * 1.0f, ColorCoefficient * 1.0f, ColorCoefficient * 1.0f);
+//
+//    // material properties
+//    soilShader.setFloat("material.shininess", 32.0f);
+//
+//    for (int s = 0; s < soilRenderTimes; s++) {
+//        for (unsigned int i = 0; i < cubesPerRender; i++) {
+//            stringstream ss;
+//            string index;
+//            ss << i;
+//            index = ss.str();
+//            soilShader.setMat4(("model[" + index + "]").c_str(), soilCubeModel[s * cubesPerRender + i]);
+//            soilShader.setVec3(("cubePos[" + index + "]").c_str(), soilCubePos[s * cubesPerRender + i]);
+//            glBindVertexArray(VAO_soil);
+//            glDrawArraysInstanced(GL_TRIANGLES, 0, 36, cubesPerRender);
+//        }
+//    }
+//    for (unsigned int i = 0; i < remainder; i++) {
+//        stringstream ss;
+//        string index;
+//        ss << i;
+//        index = ss.str();
+//        soilShader.setMat4(("model[" + index + "]").c_str(), soilCubeModel[soilRenderTimes * cubesPerRender + i]);
+//        soilShader.setVec3(("cubePos[" + index + "]").c_str(), soilCubePos[soilRenderTimes * cubesPerRender + i]);
+//        glBindVertexArray(VAO_soil);
+//        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, remainder);
+//    }
+//
+//}
 Cube::~Cube() {
     glDeleteVertexArrays(1, &VAO_grass);
     glDeleteBuffers(1, &VBO_grass);

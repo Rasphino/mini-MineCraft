@@ -54,7 +54,6 @@ void main() {
     fogFactor = clamp( fogFactor, 0.0, 1.0 );
    // vec3 texcolor = texture(grass, TexCoord).rgb;
     //vec3 color = mix(fogcolor, texcolor, fogFactor);
-
     vec3 color = mix(fogcolor, result, fogFactor);
     FragColor = vec4(color, 1.0);
 }

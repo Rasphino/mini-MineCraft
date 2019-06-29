@@ -18,7 +18,6 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "TextureAtlas.h"
-#include "Sky.h"
 
 using namespace std;
 
@@ -51,7 +50,7 @@ struct VertexData {
 };
 
 int Chunkvisited[1024] = {0};
-Sky sky;
+//Sky sky;
 
 int main() {
     glfwInit();
@@ -93,9 +92,9 @@ int main() {
 
     Cube cube;
     Shader skyboxShader("shaders/skyShader.vs", "shaders/skyShader.fs");
-    GLUquadricObj *qobj = gluNewQuadric();
-    gluQuadricNormals(qobj, GLU_SMOOTH);
-    gluQuadricTexture(qobj, GL_TRUE);
+//    GLUquadricObj *qobj = gluNewQuadric();
+//    gluQuadricNormals(qobj, GLU_SMOOTH);
+//    gluQuadricTexture(qobj, GL_TRUE);
 
     float skyboxVertices[] = {
             // 位置
@@ -167,7 +166,7 @@ int main() {
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
-    sky.InitSky(30000.0f, 20.0f, 30000.0f, 0.5, cubemapTexture);
+//    sky.InitSky(30000.0f, 20.0f, 30000.0f, 0.5, cubemapTexture);
     float r = 0;
 
     while (!glfwWindowShouldClose(window)) {
@@ -196,7 +195,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glDepthMask(GL_FALSE);
-        sky.ShowSky();
+//        sky.ShowSky();
         r += 1;
         glm::mat4 viewskybox = camera.GetViewMatrix();
         glm::mat4 projectionskybox = glm::perspective(glm::radians(camera.Zoom),
